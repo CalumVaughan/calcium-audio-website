@@ -1,0 +1,138 @@
+:root {
+    color-scheme: dark;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: #000;
+}
+
+body {
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+#drone-visual,
+#drone-space {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+#drone-visual {
+    z-index: 0;
+    opacity: 0.92;
+}
+
+#drone-space {
+    z-index: 1;
+    mix-blend-mode: screen;
+}
+
+#app-root {
+    position: relative;
+    z-index: 2;
+    width: 100vw;
+    height: 100vh;
+}
+
+.visual-instrument {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: transparent;
+    cursor: none;
+    touch-action: none;
+    user-select: none;
+}
+
+.visual-instrument::before,
+.visual-instrument::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.visual-instrument::before {
+    z-index: 2;
+    background:
+        radial-gradient(circle at var(--px, 50%) var(--py, 50%), color-mix(in srgb, var(--palette-a) 18%, transparent), transparent 0 18%, rgba(0, 0, 0, 0.06) 34%, transparent 58%),
+        conic-gradient(from 120deg at 50% 50%, color-mix(in srgb, var(--palette-a) 12%, transparent), transparent, color-mix(in srgb, var(--palette-b) 10%, transparent), transparent, color-mix(in srgb, var(--palette-c) 12%, transparent));
+    opacity: 0.72;
+    mix-blend-mode: screen;
+}
+
+.visual-instrument::after {
+    z-index: 3;
+    background:
+        repeating-linear-gradient(37deg, rgba(255, 255, 255, 0.028) 0 1px, transparent 1px 23px),
+        repeating-linear-gradient(118deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 41px);
+    mask-image: radial-gradient(circle at 50% 50%, black 0 50%, transparent 86%);
+    opacity: 0.45;
+}
+
+.micro-status {
+    position: absolute;
+    right: 16px;
+    bottom: 14px;
+    z-index: 5;
+    color: rgba(255, 255, 255, 0.34);
+    font-size: 10px;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+.pointer-core {
+    position: absolute;
+    z-index: 4;
+    left: var(--px, 50%);
+    top: var(--py, 50%);
+    width: 18px;
+    height: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    transform: translate(-50%, -50%) rotate(45deg);
+    pointer-events: none;
+    box-shadow:
+        0 0 0 10px color-mix(in srgb, var(--palette-a) 12%, transparent),
+        0 0 48px color-mix(in srgb, var(--palette-b) 42%, transparent);
+}
+
+.pointer-core::before,
+.pointer-core::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border: 1px solid color-mix(in srgb, var(--palette-c) 38%, transparent);
+    transform: translate(-50%, -50%);
+}
+
+.pointer-core::before {
+    width: 72px;
+    height: 72px;
+}
+
+.pointer-core::after {
+    width: 190px;
+    height: 190px;
+    opacity: 0.28;
+}
+
+@media (pointer: coarse) {
+    .visual-instrument {
+        cursor: crosshair;
+    }
+}
