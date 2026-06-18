@@ -15,6 +15,7 @@ const phrases = [
     "RECEIVE RECEIVE RECEIVE"
 ];
 const palette = ["#f5f7ef", "#00f0ff", "#ff3f9b", "#b6ff28", "#ff6b18"];
+const wikipediaEndpoint = "https://en.wikipedia.org/w/api.php?action=query&generator=random&grnnamespace=0&grnlimit=8&prop=extracts&exintro=1&explaintext=1&exchars=360&format=json&origin=*";
 const phraseCanvas = document.createElement("canvas");
 const phraseCtx = phraseCanvas.getContext("2d");
 phraseCanvas.width = 1800;
@@ -32,21 +33,77 @@ let activePhrase = phrases[0];
 let activeDisplay = zalgo(activePhrase, 3);
 let lastFrame = 0;
 let lastPhraseChange = 0;
+let loadingWikipedia = false;
+const wikipediaPhrases = [];
 const eventBursts = [];
+
+function compactFact(title, extract) {
+    const cleanTitle = title.replace(/\s+/g, " ").trim();
+    const cleanExtract = extract.replace(/\s+/g, " ").trim();
+    if (!cleanTitle || !cleanExtract) return null;
+    const firstSentence = cleanExtract.match(/^.*?[.!?](?:\s|$)/)?.[0] || cleanExtract;
+    const fact = `${cleanTitle}: ${firstSentence}`.replace(/\s+/g, " ").trim();
+    if (fact.length <= 120) return fact.toUpperCase();
+    const shortened = fact.slice(0, 117).replace(/\s+\S*$/, "");
+    return `${shortened}...`.toUpperCase();
+}
+
+async function loadWikipediaPhrases() {
+    if (loadingWikipedia || wikipediaPhrases.length > 6) return;
+    loadingWikipedia = true;
+    try {
+        const response = await fetch(wikipediaEndpoint, { mode: "cors" });
+        if (!response.ok) throw new Error(`Wikipedia returned ${response.status}`);
+        const data = await response.json();
+        const pages = Object.values(data.query?.pages || {});
+        pages.forEach((page) => {
+            const fact = compactFact(page.title || "", page.extract || "");
+            if (fact) wikipediaPhrases.push(fact);
+        });
+        if (wikipediaPhrases.length) document.body.dataset.feedReady = "wikipedia";
+    } catch (error) {
+        console.warn("Wikipedia signal unavailable; using local transmission", error);
+    } finally {
+        loadingWikipedia = false;
+    }
+}
+
+function nextPhrase() {
+    if (wikipediaPhrases.length < 4) loadWikipediaPhrases();
+    if (wikipediaPhrases.length) {
+        document.body.dataset.textSource = "wikipedia";
+        return wikipediaPhrases.shift();
+    }
+    document.body.dataset.textSource = "local";
+    return phrases[Math.floor(Math.random() * phrases.length)];
+}
 
 function renderPhrase() {
     phraseCtx.clearRect(0, 0, phraseCanvas.width, phraseCanvas.height);
     phraseCtx.textAlign = "center";
     phraseCtx.textBaseline = "middle";
-    phraseCtx.font = "900 86px Arial Black, sans-serif";
-    phraseCtx.globalAlpha = 0.45;
-    phraseCtx.fillStyle = "#00f0ff";
-    phraseCtx.fillText(activeDisplay, 892, 154);
-    phraseCtx.fillStyle = "#ff3f9b";
-    phraseCtx.fillText(activeDisplay, 908, 146);
-    phraseCtx.globalAlpha = 0.94;
-    phraseCtx.fillStyle = "#f5f7ef";
-    phraseCtx.fillText(activeDisplay, 900, 150);
+    const words = activeDisplay.split(" ");
+    const lines = [""];
+    words.forEach((word) => {
+        const line = lines[lines.length - 1];
+        if ((line + " " + word).length > 58 && lines.length < 3) lines.push(word);
+        else lines[lines.length - 1] = `${line} ${word}`.trim();
+    });
+    const fontSize = lines.length > 2 ? 47 : lines.length > 1 ? 60 : 82;
+    phraseCtx.font = `900 ${fontSize}px Arial Black, sans-serif`;
+    const lineHeight = fontSize * 1.05;
+    const top = 150 - ((lines.length - 1) * lineHeight) / 2;
+    lines.forEach((line, index) => {
+        const y = top + index * lineHeight;
+        phraseCtx.globalAlpha = 0.45;
+        phraseCtx.fillStyle = "#00f0ff";
+        phraseCtx.fillText(line, 892, y + 4, 1720);
+        phraseCtx.fillStyle = "#ff3f9b";
+        phraseCtx.fillText(line, 908, y - 4, 1720);
+        phraseCtx.globalAlpha = 0.94;
+        phraseCtx.fillStyle = "#f5f7ef";
+        phraseCtx.fillText(line, 900, y, 1720);
+    });
     phraseCtx.globalAlpha = 1;
 }
 
@@ -203,7 +260,7 @@ class GlitchEngine {
             this.metal(time + Math.random() * sixteenth * 0.4, 0.3 + agitation * 0.5);
         }
         if (Math.random() < density * agitation * 0.2) {
-            const repeats = 2 + Math.floor(Math.random() * 5);
+            const repeats = 2 + Math.floor(Math.random() * 3);
             for (let i = 1; i <= repeats; i += 1) {
                 this.noiseBurst(time + i * sixteenth / (repeats + 1), 0.009 + Math.random() * 0.018, 2500 + Math.random() * 9000, 0.24 + agitation * 0.38);
             }
@@ -218,6 +275,9 @@ class GlitchEngine {
 
     scheduler() {
         if (!this.audio) return;
+        if (this.nextStepTime < this.audio.currentTime - 0.2) {
+            this.nextStepTime = this.audio.currentTime + 0.02;
+        }
         while (this.nextStepTime < this.audio.currentTime + 0.11) {
             this.scheduleStep(this.nextStepTime);
             this.nextStepTime += 60 / this.tempo / 4;
@@ -309,7 +369,7 @@ function drawGlyphField(now) {
 
 function drawCentralTransmission(now) {
     if (now - lastPhraseChange > 1500 + (1 - pointerX) * 2200) {
-        activePhrase = phrases[Math.floor(Math.random() * phrases.length)];
+        activePhrase = nextPhrase();
         activeDisplay = zalgo(activePhrase, 2 + pointerY * 3);
         renderPhrase();
         lastPhraseChange = now;
@@ -371,17 +431,18 @@ function drawBursts(now) {
 
 function drawTears() {
     if (visualEnergy < 0.18 || reducedMotion) return;
-    const tears = Math.floor(1 + visualEnergy * 6);
+    const tears = Math.min(5, Math.floor(1 + visualEnergy * 3));
     for (let i = 0; i < tears; i += 1) {
-        const sourceY = Math.floor(Math.random() * height);
-        const stripHeight = Math.floor(2 + Math.random() * (8 + visualEnergy * 38));
-        const offset = (Math.random() - 0.5) * (20 + visualEnergy * 180);
-        ctx.drawImage(
-            canvas,
-            0, sourceY * pixelRatio, canvas.width, stripHeight * pixelRatio,
-            offset, sourceY, width, stripHeight
-        );
+        const y = Math.random() * height;
+        const stripHeight = 2 + Math.random() * (5 + visualEnergy * 18);
+        const offset = (Math.random() - 0.5) * (20 + visualEnergy * 140);
+        ctx.globalAlpha = 0.12 + visualEnergy * 0.15;
+        ctx.fillStyle = palette[(i + Math.floor(y)) % palette.length];
+        ctx.fillRect(offset, y, width * (0.2 + Math.random() * 0.8), stripHeight);
+        ctx.fillStyle = "#000";
+        ctx.fillRect(width - offset, y + stripHeight, -width * Math.random() * 0.5, 1 + stripHeight * 0.25);
     }
+    ctx.globalAlpha = 1;
 }
 
 function drawFrame(timestamp) {
@@ -412,7 +473,7 @@ window.addEventListener("pointermove", (event) => {
 window.addEventListener("pointerdown", () => {
     if (!started) return;
     engine.surge();
-    activePhrase = phrases[Math.floor(Math.random() * phrases.length)];
+    activePhrase = nextPhrase();
     activeDisplay = zalgo(activePhrase, 3 + pointerY * 3);
     renderPhrase();
     lastPhraseChange = performance.now();
@@ -439,4 +500,5 @@ gate.addEventListener("click", async () => {
 window.addEventListener("resize", resize);
 resize();
 renderPhrase();
+loadWikipediaPhrases();
 window.requestAnimationFrame(drawFrame);
