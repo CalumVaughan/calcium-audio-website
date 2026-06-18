@@ -188,7 +188,6 @@ async function setup() {
         showTemporaryStatus(message, 1800);
     });
     window.addEventListener("noinputmaze:exitopen", () => showTemporaryStatus("EXIT OPEN", 2200));
-    window.addEventListener("noinputmaze:anomaly", () => showTemporaryStatus("SPATIAL ERROR", 1200));
     window.addEventListener("noinputmaze:damage", event => {
         lifeCount.innerText = `${event.detail.health}/${event.detail.maxHealth}`;
         lifeCounter.classList.remove("is-healed");

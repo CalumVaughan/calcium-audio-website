@@ -94,6 +94,19 @@ button {
     color: rgba(0, 0, 0, 0.62);
 }
 
+#audio-gate em {
+    margin-top: 14px;
+    font-size: 9px;
+    line-height: 1.45;
+    font-style: normal;
+    color: #ff6868;
+}
+
+#audio-gate:hover em,
+#audio-gate:focus-visible em {
+    color: #8f0000;
+}
+
 #audio-gate.is-entered {
     opacity: 0;
     pointer-events: none;

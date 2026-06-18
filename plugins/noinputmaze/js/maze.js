@@ -34,16 +34,10 @@ const MAZE_SIGNAL_POSITIONS = [
     [14.5, 1.5], [12.5, 7.5], [5.5, 11.5], [7.5, 14.5], [14.5, 14.5]
 ];
 const MAZE_EXIT_POSITION = [1.5, 14.5];
-const MAZE_PORTALS = [
-    { from: [5, 3], to: [9.5, 11.5], turn: Math.PI / 2 },
-    { from: [9, 11], to: [5.5, 3.5], turn: -Math.PI / 2 }
-];
-
 const mazeWorld = {
     signalsCollected: 0,
     signalTotal: MAZE_SIGNAL_POSITIONS.length,
     mutationCount: 0,
-    anomalyActive: false,
     health: 5,
     maxHealth: 10,
     encounterCount: 0,
@@ -247,14 +241,13 @@ new p5(p => {
     let gameStartedAt = null;
     let nextEnemySpawn = Infinity;
     let lastPlayerCell = `${Math.floor(mazePlayer.x)},${Math.floor(mazePlayer.y)}`;
-    let portalCooldownUntil = 0;
-    let pendingMutationAt = null;
-    let mutationPulse = 0;
     let encounterPulse = 0;
     let damageEncounterAt = null;
     let bloodOrb = null;
     let nextBloodOrbRoll = Infinity;
     let forcedEncounterPending = false;
+    let forcedEncounterArmedAt = null;
+    let lastEncounterAt = -Infinity;
     const scars = [];
     const signalNodes = MAZE_SIGNAL_POSITIONS.map(([x, y], index) => ({ x, y, index, collected: false }));
 
@@ -308,8 +301,15 @@ new p5(p => {
     }
 
     function refreshEncounterDirector() {
-        forcedEncounterPending = mazeWorld.health > 1
+        const shouldForceEncounter = mazeWorld.health > 1
             && mazeWorld.encounterCount < requiredEncounterCount();
+        if (shouldForceEncounter && !forcedEncounterPending) {
+            forcedEncounterPending = true;
+            forcedEncounterArmedAt = p.millis();
+        } else if (!shouldForceEncounter) {
+            forcedEncounterPending = false;
+            forcedEncounterArmedAt = null;
+        }
         if (forcedEncounterPending) nextEnemySpawn = Math.min(nextEnemySpawn, p.millis() + 900);
     }
 
@@ -321,7 +321,11 @@ new p5(p => {
             }
         }
 
-        const maximumDistance = forcedEncounterPending ? 5.5 : 3.5;
+        const forcedWait = forcedEncounterPending && forcedEncounterArmedAt !== null
+            ? p.millis() - forcedEncounterArmedAt
+            : 0;
+        const widenedDistance = Math.max(0, Math.min(3, (forcedWait - 15000) / 5000 * 3));
+        const maximumDistance = forcedEncounterPending ? 5.5 + widenedDistance : 3.5;
         const candidates = spawnCells.map(([cellX, cellY]) => {
             const x = cellX + 0.5;
             const y = cellY + 0.5;
@@ -341,10 +345,12 @@ new p5(p => {
         const candidate = p.random(candidatePool);
         enemy = makeEnemy(candidate.x, candidate.y, { directed: forcedEncounterPending });
         forcedEncounterPending = false;
+        forcedEncounterArmedAt = null;
     }
 
     function checkDeadEndEntry() {
         if (gameStartedAt === null || p.millis() - gameStartedAt < 20000) return;
+        if (p.millis() - lastEncounterAt < 12000 || enemy) return;
         const cellX = Math.floor(mazePlayer.x);
         const cellY = Math.floor(mazePlayer.y);
         const cellKey = `${cellX},${cellY}`;
@@ -353,8 +359,6 @@ new p5(p => {
 
         const openNeighbors = mazeOpenNeighbors(cellX, cellY);
         if (openNeighbors.length !== 1 || p.random() >= 0.5) return;
-        if (enemy && enemy.seenAt !== null) return;
-
         const [entranceX, entranceY] = openNeighbors[0];
         enemy = makeEnemy(entranceX + 0.5, entranceY + 0.5, { deadEndSpawn: true });
     }
@@ -364,75 +368,12 @@ new p5(p => {
         if (scars.length > 14) scars.shift();
     }
 
-    function scheduleMutation(delay = 700) {
-        pendingMutationAt = p.millis() + delay;
-    }
-
-    function mutateMazeOutOfSight() {
-        const reserved = new Set(signalNodes.filter(node => !node.collected)
-            .map(node => `${Math.floor(node.x)},${Math.floor(node.y)}`));
-        reserved.add(`${Math.floor(MAZE_EXIT_POSITION[0])},${Math.floor(MAZE_EXIT_POSITION[1])}`);
-        if (bloodOrb) reserved.add(`${Math.floor(bloodOrb.x)},${Math.floor(bloodOrb.y)}`);
-        const playerX = Math.floor(mazePlayer.x);
-        const playerY = Math.floor(mazePlayer.y);
-        const candidates = [];
-
-        for (let y = 1; y < mazeMap.length - 1; y += 1) {
-            for (let x = 1; x < mazeMap[y].length - 1; x += 1) {
-                const distance = Math.hypot(x - playerX, y - playerY);
-                if (distance < 3 || reserved.has(`${x},${y}`) || mazePointIsVisible(x + 0.5, y + 0.5)) continue;
-                const neighbors = mazeOpenNeighbors(x, y);
-                if (mazeMap[y][x] === "1" && neighbors.length >= 2) candidates.push([x, y, "0"]);
-                if (mazeMap[y][x] === "0" && neighbors.length >= 3) candidates.push([x, y, "1"]);
-            }
-        }
-
-        for (let attempt = 0; attempt < 30 && candidates.length; attempt += 1) {
-            const [x, y, nextValue] = p.random(candidates);
-            const previousValue = mazeMap[y][x];
-            mazeMap[y][x] = nextValue;
-            if (mazeMapIsConnected(mazeMap)) {
-                mazeWorld.mutationCount += 1;
-                mutationPulse = 1;
-                addScar(x + 0.5, y + 0.5, "mutation");
-                return;
-            }
-            mazeMap[y][x] = previousValue;
-        }
-    }
-
-    function checkMutation() {
-        if (pendingMutationAt !== null && p.millis() >= pendingMutationAt) {
-            pendingMutationAt = null;
-            mutateMazeOutOfSight();
-        }
-        mutationPulse *= 0.94;
-    }
-
-    function checkPortalTraversal() {
-        if (mazeWorld.signalsCollected < 2 || p.millis() < portalCooldownUntil) return;
-        const cellX = Math.floor(mazePlayer.x);
-        const cellY = Math.floor(mazePlayer.y);
-        const portal = MAZE_PORTALS.find(item => item.from[0] === cellX && item.from[1] === cellY);
-        if (!portal) return;
-
-        addScar(mazePlayer.x, mazePlayer.y, "portal");
-        mazePlayer.x = portal.to[0];
-        mazePlayer.y = portal.to[1];
-        mazePlayer.angle += portal.turn;
-        portalCooldownUntil = p.millis() + 2400;
-        mazeWorld.anomalyActive = true;
-        mutationPulse = 1;
-        window.dispatchEvent(new CustomEvent("noinputmaze:anomaly"));
-    }
-
     function checkSignalNodes() {
         signalNodes.forEach(node => {
             if (node.collected || Math.hypot(node.x - mazePlayer.x, node.y - mazePlayer.y) > 0.42) return;
             node.collected = true;
             mazeWorld.signalsCollected += 1;
             addScar(node.x, node.y, "signal");
-            scheduleMutation(450);
             refreshEncounterDirector();
             window.dispatchEvent(new CustomEvent("noinputmaze:signal", {
                 detail: {
@@ -719,7 +660,7 @@ new p5(p => {
     function updateAndDrawEnemy(depths, raySpacing, horizon) {
         if (document.body.dataset.entered !== "true") return;
         if (gameStartedAt === null || p.millis() - gameStartedAt < 20000) return;
-        if (!enemy && p.millis() >= nextEnemySpawn) spawnHiddenEnemy();
+        if (!enemy && p.millis() >= nextEnemySpawn && p.millis() - lastEncounterAt >= 12000) spawnHiddenEnemy();
         if (!enemy) return;
         if (enemy.seenAt !== null && p.millis() - enemy.seenAt > 2800) {
             enemy = null;
@@ -736,10 +677,10 @@ new p5(p => {
             enemy.seenAt = p.millis();
             mazeWorld.health = Math.max(0, mazeWorld.health - 1);
             mazeWorld.encounterCount += 1;
+            lastEncounterAt = p.millis();
             damageEncounterAt = p.millis();
             addScar(enemy.x, enemy.y, enemy.type);
             addScar(mazePlayer.x, mazePlayer.y, "afterimage");
-            scheduleMutation();
             encounterPulse = 1;
             window.dispatchEvent(new CustomEvent("noinputmaze:enemyseen", {
                 detail: { type: enemy.type, x: enemy.x, y: enemy.y }
@@ -883,9 +824,8 @@ new p5(p => {
         p.stroke(255, 18 + intensity * 25);
         for (let layer = 1; layer <= 8; layer += 1) {
             const curve = (layer / 8) ** 2;
-            const spatialError = mazeWorld.anomalyActive ? Math.sin(layer * 4 + p.frameCount * 0.014) * 5 : 0;
-            p.line(0, p.lerp(horizon, 0, curve) + spatialError, p.width, p.lerp(horizon, 0, curve) - spatialError);
-            p.line(0, p.lerp(horizon, p.height, curve) - spatialError, p.width, p.lerp(horizon, p.height, curve) + spatialError);
+            p.line(0, p.lerp(horizon, 0, curve), p.width, p.lerp(horizon, 0, curve));
+            p.line(0, p.lerp(horizon, p.height, curve), p.width, p.lerp(horizon, p.height, curve));
         }
         return { depths, tops, bottoms };
     }
@@ -924,8 +864,6 @@ new p5(p => {
         checkDeadEndEntry();
         checkSignalNodes();
         updateBloodOrb();
-        checkPortalTraversal();
-        checkMutation();
         checkMazeEnding();
         if (mazeWorld.ended) {
             drawEndScreen();
@@ -950,7 +888,7 @@ new p5(p => {
         drawExitDoor(architecture.depths, raySpacing, horizon);
         updateAndDrawEnemy(architecture.depths, raySpacing, horizon);
 
-        if (dryWet > 0.12 || mazeWorld.anomalyActive) {
+        if (dryWet > 0.12) {
             p.stroke(255, 12 + dryWet * 34);
             p.strokeWeight(0.6);
             const ghostCount = 2 + Math.floor(dryWet * 5);
@@ -961,17 +899,9 @@ new p5(p => {
         }
 
         p.push();
-        p.tint(255, 38 + noise * 115 + mutationPulse * 45);
+        p.tint(255, 38 + noise * 115);
         p.image(grain, 0, 0, p.width, p.height);
         p.pop();
-
-        if (mutationPulse > 0.01) {
-            p.noFill();
-            p.stroke(255, mutationPulse * 90);
-            p.strokeWeight(1);
-            const inset = (1 - mutationPulse) * p.width * 0.12;
-            p.rect(inset, inset, p.width - inset * 2, p.height - inset * 2);
-        }
 
         if (encounterPulse > 0.01) {
             p.stroke(255, encounterPulse * 145);
