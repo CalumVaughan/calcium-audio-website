@@ -249,6 +249,7 @@ new p5(p => {
     let forcedEncounterArmedAt = null;
     let lastEncounterAt = -Infinity;
     const scars = [];
+    const decorations = [];
     const signalNodes = MAZE_SIGNAL_POSITIONS.map(([x, y], index) => ({ x, y, index, collected: false }));
 
     function audioValue(name) {
@@ -274,6 +275,41 @@ new p5(p => {
             grain.pixels[i + 3] = p.random(4, 18);
         }
         grain.updatePixels();
+    }
+
+    function buildDecorations() {
+        const palette = [
+            [255, 47, 174], [0, 232, 255], [176, 255, 32],
+            [255, 113, 20], [158, 82, 255], [255, 226, 36]
+        ];
+        const blocked = new Set(MAZE_SIGNAL_POSITIONS.map(([x, y]) => `${Math.floor(x)},${Math.floor(y)}`));
+        blocked.add(`${Math.floor(MAZE_EXIT_POSITION[0])},${Math.floor(MAZE_EXIT_POSITION[1])}`);
+        const candidates = [];
+
+        for (let y = 1; y < mazeMap.length - 1; y += 1) {
+            for (let x = 1; x < mazeMap[y].length - 1; x += 1) {
+                if (mazeMap[y][x] === "0" && Math.hypot(x - 1, y - 1) > 2.5 && !blocked.has(`${x},${y}`)) {
+                    candidates.push([x + 0.5, y + 0.5]);
+                }
+            }
+        }
+
+        for (let index = candidates.length - 1; index > 0; index -= 1) {
+            const swapIndex = Math.floor(p.random(index + 1));
+            [candidates[index], candidates[swapIndex]] = [candidates[swapIndex], candidates[index]];
+        }
+
+        candidates.slice(0, 14).forEach(([x, y], index) => {
+            decorations.push({
+                x,
+                y,
+                type: ["plant", "painting", "arrow"][index % 3],
+                color: p.random(palette),
+                accent: p.random(palette),
+                rotation: p.random(-p.PI, p.PI),
+                seed: p.random(1000)
+            });
+        });
     }
 
     function makeEnemy(x, y, options = {}) {
@@ -609,6 +645,70 @@ new p5(p => {
         });
     }
 
+    function drawDecorations(depths, raySpacing, horizon) {
+        decorations.forEach(decoration => {
+            if (Math.hypot(decoration.x - mazePlayer.x, decoration.y - mazePlayer.y) > 5.5) return;
+            const scale = decoration.type === "painting" ? 0.19 : decoration.type === "plant" ? 0.14 : 0.13;
+            const projection = projectWorldObject(decoration.x, decoration.y, depths, raySpacing, horizon, scale);
+            if (!projection || projection.visibleRatio < 0.05) return;
+
+            withDepthClip(projection, raySpacing, () => {
+                const [red, green, blue] = decoration.color;
+                const [accentRed, accentGreen, accentBlue] = decoration.accent;
+                p.push();
+                p.translate(projection.centerX, projection.centerY);
+
+                if (decoration.type === "plant") {
+                    p.translate(0, projection.size * 0.28);
+                    p.noStroke();
+                    p.fill(red, green, blue, 185);
+                    p.quad(-projection.size * 0.2, -projection.size * 0.02,
+                        projection.size * 0.2, -projection.size * 0.02,
+                        projection.size * 0.13, projection.size * 0.26,
+                        -projection.size * 0.13, projection.size * 0.26);
+                    p.noFill();
+                    p.stroke(accentRed, accentGreen, accentBlue, 220);
+                    p.strokeWeight(1.4);
+                    for (let stem = -2; stem <= 2; stem += 1) {
+                        const sway = Math.sin(p.frameCount * 0.018 + decoration.seed + stem) * projection.size * 0.045;
+                        p.beginShape();
+                        p.vertex(stem * projection.size * 0.035, 0);
+                        p.vertex(stem * projection.size * 0.07 + sway, -projection.size * 0.28);
+                        p.vertex(stem * projection.size * 0.13 - sway, -projection.size * 0.48);
+                        p.endShape();
+                        p.circle(stem * projection.size * 0.13 - sway, -projection.size * 0.48, projection.size * 0.08);
+                    }
+                } else if (decoration.type === "painting") {
+                    p.translate(0, -projection.size * 0.24);
+                    p.rectMode(p.CENTER);
+                    p.noFill();
+                    p.stroke(red, green, blue, 235);
+                    p.strokeWeight(2);
+                    p.rect(0, 0, projection.size * 0.78, projection.size * 0.5);
+                    p.stroke(accentRed, accentGreen, accentBlue, 210);
+                    p.strokeWeight(1);
+                    p.line(-projection.size * 0.32, projection.size * 0.16,
+                        projection.size * 0.28, -projection.size * 0.12);
+                    p.circle(projection.size * 0.12, projection.size * 0.02, projection.size * 0.15);
+                    p.line(-projection.size * 0.18, -projection.size * 0.18,
+                        projection.size * 0.34, projection.size * 0.14);
+                    p.rectMode(p.CORNER);
+                } else {
+                    p.translate(0, -projection.size * 0.12);
+                    p.rotate(decoration.rotation);
+                    p.stroke(red, green, blue, 225);
+                    p.strokeWeight(2);
+                    p.line(-projection.size * 0.38, 0, projection.size * 0.34, 0);
+                    p.line(projection.size * 0.34, 0,
+                        projection.size * 0.15, -projection.size * 0.16);
+                    p.line(projection.size * 0.34, 0,
+                        projection.size * 0.15, projection.size * 0.16);
+                }
+                p.pop();
+            });
+        });
+    }
+
     function drawExitDoor(depths, raySpacing, horizon) {
         if (!exitIsReady()) return;
         const projection = projectWorldObject(
@@ -764,6 +864,14 @@ new p5(p => {
         const drive = audioValue("drive");
         const intensity = audioValue("intensity");
         const verticalScale = 0.9 + pitch * 0.42;
+        const encounterAge = damageEncounterAt === null ? 15000 : p.millis() - damageEncounterAt;
+        const shockEnvelope = Math.max(0, 1 - encounterAge / 15000);
+        const wallWarp = Math.max(
+            shockEnvelope * 0.92,
+            chaos * 0.86,
+            feedback * 0.62,
+            Math.max(0, intensity - 0.1) * 0.7
+        );
 
         p.stroke(255, 20 + intensity * 36);
         p.strokeWeight(0.7 + drive * 0.65);
@@ -778,9 +886,21 @@ new p5(p => {
             const chaosJitter = Math.sin(i * 0.73 + p.frameCount * 0.08) * chaos * 3.2;
             const top = horizon - wallHeight / 2 + chaosJitter;
             const bottom = horizon + wallHeight / 2 - chaosJitter;
-            const x = screenRatio * p.width;
+            const baseX = screenRatio * p.width;
+            const edgeStrength = Math.pow(Math.abs(screenRatio - 0.5) * 2, 1.35);
+            const sidePhase = screenRatio < 0.5 ? 0 : p.PI * 0.72;
+            const broadFold = Math.sin(screenRatio * p.PI * 2.35 + p.frameCount * 0.012 + sidePhase)
+                * p.width * 0.105 * wallWarp * edgeStrength;
+            const secondaryFold = Math.sin(screenRatio * p.PI * 5.2 - p.frameCount * 0.008)
+                * p.width * 0.025 * wallWarp * edgeStrength;
+            const verticalFold = Math.cos(screenRatio * p.PI * 1.7 + p.frameCount * 0.01)
+                * p.height * 0.075 * wallWarp * edgeStrength;
+            const x = baseX + broadFold + secondaryFold;
+            const bentTop = top + verticalFold;
+            const bentBottom = bottom - verticalFold * 0.7;
             tops.push({ x, y: top });
-            bottoms.push({ x, y: bottom });
+            tops[tops.length - 1].y = bentTop;
+            bottoms.push({ x, y: bentBottom });
             rays.push(ray);
             depths.push(correctedDistance);
 
@@ -788,7 +908,7 @@ new p5(p => {
             const edgePulse = Math.min(ray.wallOffset, 1 - ray.wallOffset) < 0.035 + chaos * 0.018;
             p.stroke(255, edgePulse ? Math.min(255, depthAlpha + 70) : depthAlpha * (0.28 + feedback * 0.25));
             p.strokeWeight((edgePulse ? 1.3 : 0.55) + drive * 0.55);
-            p.line(x, top, x, bottom);
+            p.line(x, bentTop, x, bentBottom);
         }
 
         p.stroke(255, 190 + intensity * 60);
@@ -796,6 +916,14 @@ new p5(p => {
         p.beginShape();
         tops.forEach(point => p.vertex(point.x, point.y));
         p.endShape();
+
+        if (wallWarp > 0.06) {
+            p.stroke(255, 18 + wallWarp * 48);
+            p.strokeWeight(0.7 + wallWarp * 0.6);
+            for (let fold = 0; fold < tops.length - 9; fold += 10) {
+                p.line(tops[fold].x, tops[fold].y, bottoms[fold + 8].x, bottoms[fold + 8].y);
+            }
+        }
         p.beginShape();
         bottoms.forEach(point => p.vertex(point.x, point.y));
         p.endShape();
@@ -850,6 +978,7 @@ new p5(p => {
         p.textFont("Courier New");
         p.noFill();
         buildGrain();
+        buildDecorations();
     };
 
     p.draw = () => {
@@ -882,6 +1011,7 @@ new p5(p => {
 
         p.background(0);
         const architecture = drawArchitecture(horizon, raySpacing);
+        drawDecorations(architecture.depths, raySpacing, horizon);
         drawScars(architecture.depths, raySpacing, horizon);
         drawSignalNodes(architecture.depths, raySpacing, horizon);
         drawBloodOrb(architecture.depths, raySpacing, horizon);
