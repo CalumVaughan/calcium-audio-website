@@ -38,19 +38,19 @@ body {
     font-weight: 700;
     letter-spacing: 0;
     pointer-events: none;
-    mix-blend-mode: difference;
+    mix-blend-mode: normal;
 }
 
 #identity {
     top: 22px;
     left: 24px;
-    color: #00f0ff;
+    color: #f2f2ed;
 }
 
 #meter {
     right: 24px;
     bottom: 22px;
-    color: #ff3f9b;
+    color: #dfff00;
     text-align: right;
 }
 
@@ -62,24 +62,23 @@ body[data-started="true"] #meter {
 #gate {
     position: fixed;
     z-index: 3;
-    top: 50%;
-    left: 50%;
-    width: min(410px, calc(100vw - 40px));
-    padding: 34px 28px 30px;
-    transform: translate(-50%, -50%);
-    border: 2px solid #f5f7ef;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: clamp(28px, 6vw, 84px);
+    border: 0;
     border-radius: 0;
     color: #f5f7ef;
     background: #000;
     font: inherit;
-    text-align: center;
+    text-align: left;
     cursor: pointer;
 }
 
 #gate:hover,
 #gate:focus-visible {
-    color: #000;
-    background: #f5f7ef;
+    color: #f5f7ef;
+    background: rgba(255, 255, 255, 0.035);
     outline: 0;
 }
 
@@ -92,41 +91,53 @@ body[data-started="true"] #meter {
 }
 
 #gate span {
-    margin-bottom: 20px;
-    font-size: 15px;
+    position: absolute;
+    top: clamp(28px, 6vw, 84px);
+    right: clamp(28px, 6vw, 84px);
+    padding-bottom: 5px;
+    border-bottom: 1px solid currentColor;
+    font-size: 12px;
 }
 
 #gate strong {
-    font-size: clamp(25px, 7vw, 38px);
-    line-height: 0.95;
+    max-width: 8ch;
+    margin-top: 12vh;
+    font-size: clamp(58px, 12vw, 180px);
+    line-height: 0.76;
 }
 
 #gate b {
-    margin-top: 32px;
-    color: #ff304f;
+    position: absolute;
+    left: clamp(28px, 6vw, 84px);
+    bottom: clamp(76px, 10vw, 130px);
+    color: #ff4b33;
     font-size: 12px;
 }
 
 #gate:hover b,
 #gate:focus-visible b {
-    color: #b00020;
+    color: #ff4b33;
 }
 
 #gate small {
-    margin-top: 10px;
+    position: absolute;
+    left: clamp(28px, 6vw, 84px);
+    bottom: clamp(52px, 7vw, 100px);
     font-size: 10px;
 }
 
 #gate i {
-    margin-top: 28px;
-    color: #00f0ff;
+    position: absolute;
+    right: clamp(28px, 6vw, 84px);
+    bottom: clamp(52px, 7vw, 100px);
+    color: #dfff00;
     font-size: 12px;
     font-style: normal;
 }
 
 #gate:hover i,
 #gate:focus-visible i {
-    color: #006f78;
+    color: #dfff00;
 }
 
 #gate.is-gone {
@@ -142,5 +153,16 @@ body[data-started="true"] #meter {
     #meter {
         right: 16px;
         bottom: 16px;
+    }
+
+    #gate strong {
+        margin-top: 19vh;
+        font-size: clamp(48px, 18vw, 82px);
+    }
+
+    #gate i {
+        right: auto;
+        left: 28px;
+        bottom: 30px;
     }
 }
