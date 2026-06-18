@@ -181,11 +181,13 @@ async function setup() {
         void signalCounter.offsetWidth;
         signalCounter.classList.add("is-hit");
         playSignalGlitch();
-        const message = event.detail.count === event.detail.total
-            ? "EXIT OPEN"
-            : `SIGNAL ${event.detail.count}/${event.detail.total}`;
+        let message = `SIGNAL ${event.detail.count}/${event.detail.total}`;
+        if (event.detail.count === event.detail.total) {
+            message = event.detail.exitReady ? "EXIT OPEN" : "EXIT SEALED";
+        }
         showTemporaryStatus(message, 1800);
     });
+    window.addEventListener("noinputmaze:exitopen", () => showTemporaryStatus("EXIT OPEN", 2200));
     window.addEventListener("noinputmaze:anomaly", () => showTemporaryStatus("SPATIAL ERROR", 1200));
     window.addEventListener("noinputmaze:damage", event => {
         lifeCount.innerText = `${event.detail.health}/${event.detail.maxHealth}`;

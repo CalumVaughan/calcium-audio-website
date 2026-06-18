@@ -46,6 +46,7 @@ const mazeWorld = {
     anomalyActive: false,
     health: 5,
     maxHealth: 10,
+    encounterCount: 0,
     ended: null
 };
 window.noInputMazeWorld = mazeWorld;
@@ -68,6 +69,13 @@ function mazeOpenNeighbors(cellX, cellY, map = mazeMap) {
     return [[0, -1], [1, 0], [0, 1], [-1, 0]]
         .map(([offsetX, offsetY]) => [cellX + offsetX, cellY + offsetY])
         .filter(([x, y]) => !mazeIsWall(x + 0.5, y + 0.5, map));
+}
+
+function mazeCellIsCorner(cellX, cellY) {
+    const neighbors = mazeOpenNeighbors(cellX, cellY);
+    return neighbors.length === 2
+        && neighbors[0][0] !== neighbors[1][0]
+        && neighbors[0][1] !== neighbors[1][1];
 }
 
 function normalizeMazeAngle(angle) {
@@ -246,6 +254,7 @@ new p5(p => {
     let damageEncounterAt = null;
     let bloodOrb = null;
     let nextBloodOrbRoll = Infinity;
+    let forcedEncounterPending = false;
     const scars = [];
     const signalNodes = MAZE_SIGNAL_POSITIONS.map(([x, y], index) => ({ x, y, index, collected: false }));
 
@@ -286,23 +295,52 @@ new p5(p => {
         };
     }
 
+    function requiredEncounterCount() {
+        if (mazeWorld.signalsCollected >= 5) return 3;
+        if (mazeWorld.signalsCollected >= 4) return 2;
+        if (mazeWorld.signalsCollected >= 2) return 1;
+        return 0;
+    }
+
+    function exitIsReady() {
+        return mazeWorld.signalsCollected === mazeWorld.signalTotal
+            && (mazeWorld.encounterCount >= 3 || mazeWorld.health <= 1);
+    }
+
+    function refreshEncounterDirector() {
+        forcedEncounterPending = mazeWorld.health > 1
+            && mazeWorld.encounterCount < requiredEncounterCount();
+        if (forcedEncounterPending) nextEnemySpawn = Math.min(nextEnemySpawn, p.millis() + 900);
+    }
+
     function spawnHiddenEnemy() {
-        const candidates = MAZE_ENEMY_CELLS.map(([cellX, cellY]) => {
+        const spawnCells = [];
+        for (let y = 1; y < mazeMap.length - 1; y += 1) {
+            for (let x = 1; x < mazeMap[y].length - 1; x += 1) {
+                if (!mazeIsWall(x + 0.5, y + 0.5) && mazeCellIsCorner(x, y)) spawnCells.push([x, y]);
+            }
+        }
+
+        const maximumDistance = forcedEncounterPending ? 5.5 : 3.5;
+        const candidates = spawnCells.map(([cellX, cellY]) => {
             const x = cellX + 0.5;
             const y = cellY + 0.5;
             const distance = Math.hypot(x - mazePlayer.x, y - mazePlayer.y);
             return { cellX, cellY, x, y, distance };
         }).filter(candidate => !mazeIsWall(candidate.x, candidate.y)
             && candidate.distance > 1.25
-            && candidate.distance < 3.5
+            && candidate.distance < maximumDistance
+            && (!bloodOrb || Math.hypot(candidate.x - bloodOrb.x, candidate.y - bloodOrb.y) > 0.5)
             && !mazePointIsVisible(candidate.x, candidate.y))
             .sort((a, b) => a.distance - b.distance);
         if (!candidates.length) {
-            nextEnemySpawn = p.millis() + 650;
+            nextEnemySpawn = p.millis() + (forcedEncounterPending ? 320 : 650);
             return;
         }
-        const candidate = p.random(candidates.slice(0, Math.min(2, candidates.length)));
-        enemy = makeEnemy(candidate.x, candidate.y);
+        const candidatePool = candidates.slice(0, Math.min(forcedEncounterPending ? 3 : 2, candidates.length));
+        const candidate = p.random(candidatePool);
+        enemy = makeEnemy(candidate.x, candidate.y, { directed: forcedEncounterPending });
+        forcedEncounterPending = false;
     }
 
     function checkDeadEndEntry() {
@@ -395,8 +433,14 @@ new p5(p => {
             mazeWorld.signalsCollected += 1;
             addScar(node.x, node.y, "signal");
             scheduleMutation(450);
+            refreshEncounterDirector();
             window.dispatchEvent(new CustomEvent("noinputmaze:signal", {
-                detail: { index: node.index, count: mazeWorld.signalsCollected, total: mazeWorld.signalTotal }
+                detail: {
+                    index: node.index,
+                    count: mazeWorld.signalsCollected,
+                    total: mazeWorld.signalTotal,
+                    exitReady: exitIsReady()
+                }
             }));
         });
     }
@@ -450,7 +494,7 @@ new p5(p => {
             if (damageEncounterAt !== null && p.millis() - damageEncounterAt >= 1000) finishMaze("dead");
             return;
         }
-        if (mazeWorld.signalsCollected === mazeWorld.signalTotal
+        if (exitIsReady()
             && Math.hypot(mazePlayer.x - MAZE_EXIT_POSITION[0], mazePlayer.y - MAZE_EXIT_POSITION[1]) < 0.44) {
             finishMaze("won");
         }
@@ -625,7 +669,7 @@ new p5(p => {
     }
 
     function drawExitDoor(depths, raySpacing, horizon) {
-        if (mazeWorld.signalsCollected !== mazeWorld.signalTotal) return;
+        if (!exitIsReady()) return;
         const projection = projectWorldObject(
             MAZE_EXIT_POSITION[0], MAZE_EXIT_POSITION[1], depths, raySpacing, horizon, 0.31
         );
@@ -688,8 +732,10 @@ new p5(p => {
         if (!projection || projection.visibleRatio < revealThreshold) return;
 
         if (enemy.seenAt === null) {
+            const exitWasReady = exitIsReady();
             enemy.seenAt = p.millis();
             mazeWorld.health = Math.max(0, mazeWorld.health - 1);
+            mazeWorld.encounterCount += 1;
             damageEncounterAt = p.millis();
             addScar(enemy.x, enemy.y, enemy.type);
             addScar(mazePlayer.x, mazePlayer.y, "afterimage");
@@ -701,6 +747,10 @@ new p5(p => {
             window.dispatchEvent(new CustomEvent("noinputmaze:damage", {
                 detail: { health: mazeWorld.health, maxHealth: mazeWorld.maxHealth }
             }));
+            refreshEncounterDirector();
+            if (!exitWasReady && exitIsReady()) {
+                window.dispatchEvent(new CustomEvent("noinputmaze:exitopen"));
+            }
         }
 
         drawEnemy(projection, raySpacing);
