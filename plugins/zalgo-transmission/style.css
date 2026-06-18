@@ -1,0 +1,146 @@
+:root {
+    color-scheme: dark;
+    font-family: "Courier New", monospace;
+    background: #000;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#transmission {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: #000;
+}
+
+body {
+    cursor: crosshair;
+}
+
+#visuals {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#identity,
+#meter {
+    position: fixed;
+    z-index: 2;
+    display: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    pointer-events: none;
+    mix-blend-mode: difference;
+}
+
+#identity {
+    top: 22px;
+    left: 24px;
+    color: #00f0ff;
+}
+
+#meter {
+    right: 24px;
+    bottom: 22px;
+    color: #ff3f9b;
+    text-align: right;
+}
+
+body[data-started="true"] #identity,
+body[data-started="true"] #meter {
+    display: block;
+}
+
+#gate {
+    position: fixed;
+    z-index: 3;
+    top: 50%;
+    left: 50%;
+    width: min(410px, calc(100vw - 40px));
+    padding: 34px 28px 30px;
+    transform: translate(-50%, -50%);
+    border: 2px solid #f5f7ef;
+    border-radius: 0;
+    color: #f5f7ef;
+    background: #000;
+    font: inherit;
+    text-align: center;
+    cursor: pointer;
+}
+
+#gate:hover,
+#gate:focus-visible {
+    color: #000;
+    background: #f5f7ef;
+    outline: 0;
+}
+
+#gate span,
+#gate strong,
+#gate b,
+#gate small,
+#gate i {
+    display: block;
+}
+
+#gate span {
+    margin-bottom: 20px;
+    font-size: 15px;
+}
+
+#gate strong {
+    font-size: clamp(25px, 7vw, 38px);
+    line-height: 0.95;
+}
+
+#gate b {
+    margin-top: 32px;
+    color: #ff304f;
+    font-size: 12px;
+}
+
+#gate:hover b,
+#gate:focus-visible b {
+    color: #b00020;
+}
+
+#gate small {
+    margin-top: 10px;
+    font-size: 10px;
+}
+
+#gate i {
+    margin-top: 28px;
+    color: #00f0ff;
+    font-size: 12px;
+    font-style: normal;
+}
+
+#gate:hover i,
+#gate:focus-visible i {
+    color: #006f78;
+}
+
+#gate.is-gone {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    #identity {
+        top: 16px;
+        left: 16px;
+    }
+
+    #meter {
+        right: 16px;
+        bottom: 16px;
+    }
+}
