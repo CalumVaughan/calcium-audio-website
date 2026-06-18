@@ -236,7 +236,8 @@ new p5(p => {
     let grain;
     let mazeCanvas;
     let enemy = null;
-    let nextEnemySpawn = 1600;
+    let gameStartedAt = null;
+    let nextEnemySpawn = Infinity;
     let lastPlayerCell = `${Math.floor(mazePlayer.x)},${Math.floor(mazePlayer.y)}`;
     let portalCooldownUntil = 0;
     let pendingMutationAt = null;
@@ -244,7 +245,7 @@ new p5(p => {
     let encounterPulse = 0;
     let damageEncounterAt = null;
     let bloodOrb = null;
-    let nextBloodOrbRoll = 14000;
+    let nextBloodOrbRoll = Infinity;
     const scars = [];
     const signalNodes = MAZE_SIGNAL_POSITIONS.map(([x, y], index) => ({ x, y, index, collected: false }));
 
@@ -305,6 +306,7 @@ new p5(p => {
     }
 
     function checkDeadEndEntry() {
+        if (gameStartedAt === null || p.millis() - gameStartedAt < 20000) return;
         const cellX = Math.floor(mazePlayer.x);
         const cellY = Math.floor(mazePlayer.y);
         const cellKey = `${cellX},${cellY}`;
@@ -405,7 +407,7 @@ new p5(p => {
             if (Math.hypot(bloodOrb.x - mazePlayer.x, bloodOrb.y - mazePlayer.y) < 0.4) {
                 mazeWorld.health = Math.min(mazeWorld.maxHealth, mazeWorld.health + 1);
                 bloodOrb = null;
-                nextBloodOrbRoll = p.millis() + p.random(18000, 30000);
+                nextBloodOrbRoll = p.millis() + p.random(15000, 26000);
                 window.dispatchEvent(new CustomEvent("noinputmaze:heal", {
                     detail: { health: mazeWorld.health, maxHealth: mazeWorld.maxHealth }
                 }));
@@ -414,8 +416,8 @@ new p5(p => {
         }
 
         if (mazeWorld.health >= mazeWorld.maxHealth || p.millis() < nextBloodOrbRoll) return;
-        nextBloodOrbRoll = p.millis() + p.random(18000, 30000);
-        if (p.random() >= 0.3) return;
+        nextBloodOrbRoll = p.millis() + p.random(15000, 26000);
+        if (p.random() >= 0.4) return;
 
         const blockedCells = new Set(signalNodes.filter(node => !node.collected)
             .map(node => `${Math.floor(node.x)},${Math.floor(node.y)}`));
@@ -426,8 +428,8 @@ new p5(p => {
         })).filter(candidate => {
             const distance = Math.hypot(candidate.x - mazePlayer.x, candidate.y - mazePlayer.y);
             return !mazeIsWall(candidate.x, candidate.y)
-                && distance > 3
-                && distance < 10
+                && distance > 2.3
+                && distance < 9
                 && !mazePointIsVisible(candidate.x, candidate.y)
                 && !blockedCells.has(`${Math.floor(candidate.x)},${Math.floor(candidate.y)}`);
         });
@@ -577,8 +579,8 @@ new p5(p => {
 
     function drawSignalNodes(depths, raySpacing, horizon) {
         signalNodes.filter(node => !node.collected).forEach(node => {
-            if (Math.hypot(node.x - mazePlayer.x, node.y - mazePlayer.y) > 2.75) return;
-            const projection = projectWorldObject(node.x, node.y, depths, raySpacing, horizon, 0.125);
+            if (Math.hypot(node.x - mazePlayer.x, node.y - mazePlayer.y) > 3.4) return;
+            const projection = projectWorldObject(node.x, node.y, depths, raySpacing, horizon, 0.14);
             if (!projection || projection.visibleRatio < 0.05) return;
             withDepthClip(projection, raySpacing, () => {
                 p.push();
@@ -601,7 +603,7 @@ new p5(p => {
 
     function drawBloodOrb(depths, raySpacing, horizon) {
         if (!bloodOrb) return;
-        const projection = projectWorldObject(bloodOrb.x, bloodOrb.y, depths, raySpacing, horizon, 0.12);
+        const projection = projectWorldObject(bloodOrb.x, bloodOrb.y, depths, raySpacing, horizon, 0.145);
         if (!projection || projection.visibleRatio < 0.05) return;
 
         withDepthClip(projection, raySpacing, () => {
@@ -672,6 +674,7 @@ new p5(p => {
 
     function updateAndDrawEnemy(depths, raySpacing, horizon) {
         if (document.body.dataset.entered !== "true") return;
+        if (gameStartedAt === null || p.millis() - gameStartedAt < 20000) return;
         if (!enemy && p.millis() >= nextEnemySpawn) spawnHiddenEnemy();
         if (!enemy) return;
         if (enemy.seenAt !== null && p.millis() - enemy.seenAt > 2800) {
@@ -844,7 +847,14 @@ new p5(p => {
         mazeCanvas.addEventListener("click", () => {
             if (document.body.dataset.entered === "true" && !document.pointerLockElement) captureMazePointer();
         });
-        window.addEventListener("noinputmaze:entered", captureMazePointer);
+        window.addEventListener("noinputmaze:entered", () => {
+            captureMazePointer();
+            if (gameStartedAt === null) {
+                gameStartedAt = p.millis();
+                nextEnemySpawn = gameStartedAt + 20000;
+                nextBloodOrbRoll = gameStartedAt + 9000;
+            }
+        });
         p.pixelDensity(1);
         p.frameRate(60);
         p.textFont("Courier New");
