@@ -282,33 +282,71 @@ new p5(p => {
             [255, 47, 174], [0, 232, 255], [176, 255, 32],
             [255, 113, 20], [158, 82, 255], [255, 226, 36]
         ];
+        const directions = [
+            { x: 0, y: -1 }, { x: 1, y: 0 },
+            { x: 0, y: 1 }, { x: -1, y: 0 }
+        ];
         const blocked = new Set(MAZE_SIGNAL_POSITIONS.map(([x, y]) => `${Math.floor(x)},${Math.floor(y)}`));
         blocked.add(`${Math.floor(MAZE_EXIT_POSITION[0])},${Math.floor(MAZE_EXIT_POSITION[1])}`);
-        const candidates = [];
+        const wallAnchors = [];
+        const cornerAnchors = [];
+
+        function shuffle(items) {
+            for (let index = items.length - 1; index > 0; index -= 1) {
+                const swapIndex = Math.floor(p.random(index + 1));
+                [items[index], items[swapIndex]] = [items[swapIndex], items[index]];
+            }
+        }
+
+        function decoration(type, anchor, index) {
+            return {
+                ...anchor,
+                type,
+                color: p.random(palette),
+                accent: p.random(palette),
+                rotation: [0, p.HALF_PI, p.PI, -p.HALF_PI][index % 4],
+                seed: p.random(1000)
+            };
+        }
 
         for (let y = 1; y < mazeMap.length - 1; y += 1) {
             for (let x = 1; x < mazeMap[y].length - 1; x += 1) {
-                if (mazeMap[y][x] === "0" && Math.hypot(x - 1, y - 1) > 2.5 && !blocked.has(`${x},${y}`)) {
-                    candidates.push([x + 0.5, y + 0.5]);
+                if (mazeMap[y][x] !== "0" || Math.hypot(x - 1, y - 1) <= 2.5 || blocked.has(`${x},${y}`)) continue;
+
+                const wallDirections = directions.filter(direction => mazeMap[y + direction.y][x + direction.x] === "1");
+                wallDirections.forEach(direction => {
+                    wallAnchors.push({
+                        x: x + 0.5 + direction.x * 0.455,
+                        y: y + 0.5 + direction.y * 0.455,
+                        normalX: -direction.x,
+                        normalY: -direction.y
+                    });
+                });
+
+                let cornerAdded = false;
+                for (let first = 0; first < wallDirections.length && !cornerAdded; first += 1) {
+                    for (let second = first + 1; second < wallDirections.length; second += 1) {
+                        const a = wallDirections[first];
+                        const b = wallDirections[second];
+                        if (a.x * b.x + a.y * b.y !== 0) continue;
+                        cornerAnchors.push({
+                            x: x + 0.5 + (a.x + b.x) * 0.34,
+                            y: y + 0.5 + (a.y + b.y) * 0.34
+                        });
+                        cornerAdded = true;
+                        break;
+                    }
                 }
             }
         }
 
-        for (let index = candidates.length - 1; index > 0; index -= 1) {
-            const swapIndex = Math.floor(p.random(index + 1));
-            [candidates[index], candidates[swapIndex]] = [candidates[swapIndex], candidates[index]];
-        }
-
-        candidates.slice(0, 14).forEach(([x, y], index) => {
-            decorations.push({
-                x,
-                y,
-                type: ["plant", "painting", "arrow"][index % 3],
-                color: p.random(palette),
-                accent: p.random(palette),
-                rotation: p.random(-p.PI, p.PI),
-                seed: p.random(1000)
-            });
+        shuffle(wallAnchors);
+        shuffle(cornerAnchors);
+        wallAnchors.slice(0, 10).forEach((anchor, index) => {
+            decorations.push(decoration(index % 2 === 0 ? "painting" : "arrow", anchor, index));
+        });
+        cornerAnchors.slice(0, 5).forEach((anchor, index) => {
+            decorations.push(decoration("plant", anchor, index));
         });
     }
 
@@ -655,6 +693,12 @@ new p5(p => {
             withDepthClip(projection, raySpacing, () => {
                 const [red, green, blue] = decoration.color;
                 const [accentRed, accentGreen, accentBlue] = decoration.accent;
+                const distance = Math.max(0.001, Math.hypot(mazePlayer.x - decoration.x, mazePlayer.y - decoration.y));
+                const viewX = (mazePlayer.x - decoration.x) / distance;
+                const viewY = (mazePlayer.y - decoration.y) / distance;
+                const wallFacing = decoration.type === "plant"
+                    ? 1
+                    : Math.max(0.16, Math.abs(viewX * decoration.normalX + viewY * decoration.normalY));
                 p.push();
                 p.translate(projection.centerX, projection.centerY);
 
@@ -684,25 +728,27 @@ new p5(p => {
                     p.noFill();
                     p.stroke(red, green, blue, 235);
                     p.strokeWeight(2);
-                    p.rect(0, 0, projection.size * 0.78, projection.size * 0.5);
+                    p.rect(0, 0, projection.size * 0.78 * wallFacing, projection.size * 0.5);
                     p.stroke(accentRed, accentGreen, accentBlue, 210);
                     p.strokeWeight(1);
-                    p.line(-projection.size * 0.32, projection.size * 0.16,
-                        projection.size * 0.28, -projection.size * 0.12);
-                    p.circle(projection.size * 0.12, projection.size * 0.02, projection.size * 0.15);
-                    p.line(-projection.size * 0.18, -projection.size * 0.18,
-                        projection.size * 0.34, projection.size * 0.14);
+                    p.line(-projection.size * 0.32 * wallFacing, projection.size * 0.16,
+                        projection.size * 0.28 * wallFacing, -projection.size * 0.12);
+                    p.ellipse(projection.size * 0.12 * wallFacing, projection.size * 0.02,
+                        projection.size * 0.15 * wallFacing, projection.size * 0.15);
+                    p.line(-projection.size * 0.18 * wallFacing, -projection.size * 0.18,
+                        projection.size * 0.34 * wallFacing, projection.size * 0.14);
                     p.rectMode(p.CORNER);
                 } else {
                     p.translate(0, -projection.size * 0.12);
                     p.rotate(decoration.rotation);
                     p.stroke(red, green, blue, 225);
                     p.strokeWeight(2);
-                    p.line(-projection.size * 0.38, 0, projection.size * 0.34, 0);
-                    p.line(projection.size * 0.34, 0,
-                        projection.size * 0.15, -projection.size * 0.16);
-                    p.line(projection.size * 0.34, 0,
-                        projection.size * 0.15, projection.size * 0.16);
+                    p.line(-projection.size * 0.38 * wallFacing, 0,
+                        projection.size * 0.34 * wallFacing, 0);
+                    p.line(projection.size * 0.34 * wallFacing, 0,
+                        projection.size * 0.15 * wallFacing, -projection.size * 0.16);
+                    p.line(projection.size * 0.34 * wallFacing, 0,
+                        projection.size * 0.15 * wallFacing, projection.size * 0.16);
                 }
                 p.pop();
             });
