@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#000000">
+    <meta name="rnbo-version" content="1.0.0-alpha.5">
+    <link rel="stylesheet" href="style/style.css?v=7">
+    <title>No Input Maze</title>
+</head>
+
+<body>
+    <noscript>This experiment requires JavaScript.</noscript>
+    <main id="maze" aria-label="No Input Maze">
+        <div id="maze-canvas" aria-hidden="true"></div>
+        <button id="audio-gate" type="button">
+            <span>ENTER</span>
+            <small>NO INPUT MAZE</small>
+            <b>FIND ALL 5 SIGNALS WITHOUT LOSING YOUR LIFE TO OPEN THE GOLDEN EXIT</b>
+        </button>
+        <div id="signal-counter" aria-live="polite">
+            <span>SIGNALS</span>
+            <strong>0/5</strong>
+        </div>
+        <div id="life-counter" aria-live="polite">
+            <span>LIFE</span>
+            <strong>5/10</strong>
+        </div>
+        <div id="status" role="status" aria-live="polite">INITIALIZING</div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js"></script>
+    <script src="js/guardrails.js"></script>
+    <script src="js/maze.js?v=14"></script>
+    <script src="js/app.js?v=11"></script>
+</body>
+</html>

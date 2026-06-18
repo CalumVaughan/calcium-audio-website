@@ -1,0 +1,244 @@
+:root {
+    color-scheme: dark;
+    font-family: "Courier New", Courier, monospace;
+    background: #000;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: #000;
+}
+
+body {
+    color: #fff;
+}
+
+button {
+    font: inherit;
+}
+
+#maze,
+#maze-canvas,
+#maze-canvas canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#maze-canvas canvas {
+    display: block;
+}
+
+#audio-gate {
+    position: fixed;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    width: min(380px, calc(100vw - 32px));
+    padding: 22px 28px 20px;
+    color: #fff;
+    background: #000;
+    border: 1px solid #fff;
+    border-radius: 0;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    letter-spacing: 0;
+    transition: color 120ms linear, background 120ms linear;
+}
+
+#audio-gate:hover,
+#audio-gate:focus-visible {
+    color: #000;
+    background: #fff;
+    outline: none;
+}
+
+#audio-gate span {
+    font-size: 18px;
+    line-height: 1;
+}
+
+#audio-gate small {
+    margin-top: 11px;
+    font-size: 11px;
+    line-height: 1;
+}
+
+#audio-gate b {
+    margin-top: 18px;
+    font-size: 10px;
+    line-height: 1.45;
+    font-weight: 400;
+}
+
+#audio-gate.is-entered {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 500ms ease;
+}
+
+#status {
+    position: fixed;
+    z-index: 2;
+    right: 16px;
+    bottom: 14px;
+    font-size: 9px;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.62);
+    pointer-events: none;
+}
+
+#signal-counter {
+    position: fixed;
+    z-index: 2;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    color: #ffe600;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms linear;
+}
+
+body[data-entered="true"] #signal-counter {
+    opacity: 0.72;
+}
+
+#signal-counter span {
+    font-size: 12px;
+    line-height: 1;
+}
+
+#signal-counter strong {
+    font-size: 26px;
+    line-height: 1;
+    font-weight: 400;
+}
+
+#signal-counter.is-hit {
+    opacity: 1;
+    animation: signal-hit 420ms steps(2, end);
+}
+
+#life-counter {
+    position: fixed;
+    z-index: 2;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    color: rgba(255, 255, 255, 0.72);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms linear, color 160ms linear;
+}
+
+body[data-entered="true"] #life-counter {
+    opacity: 1;
+}
+
+#life-counter span {
+    font-size: 12px;
+    line-height: 1;
+}
+
+#life-counter strong {
+    font-size: 26px;
+    line-height: 1;
+    font-weight: 400;
+}
+
+#life-counter.is-hit {
+    color: #ff3232;
+    animation: life-hit 360ms steps(2, end);
+}
+
+#life-counter.is-healed {
+    color: #ff6666;
+    animation: life-healed 520ms steps(3, end);
+}
+
+body[data-ended] #signal-counter,
+body[data-ended] #life-counter,
+body[data-ended] #status {
+    opacity: 0;
+}
+
+@keyframes life-hit {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(-6px, 2px); }
+    50% { transform: translate(4px, -2px); }
+    75% { transform: translate(-2px, 1px); }
+    100% { transform: translate(0, 0); }
+}
+
+@keyframes life-healed {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.22); }
+    70% { transform: scale(0.94); }
+    100% { transform: scale(1); }
+}
+
+@keyframes signal-hit {
+    0% { transform: translate(0, 0); filter: none; }
+    20% { transform: translate(7px, -2px); filter: contrast(2); }
+    40% { transform: translate(-5px, 3px); }
+    60% { transform: translate(3px, 1px); filter: brightness(2); }
+    100% { transform: translate(0, 0); filter: none; }
+}
+
+@media (max-width: 600px) {
+    #audio-gate {
+        padding: 19px 20px 17px;
+    }
+
+    #status {
+        right: 10px;
+        bottom: 10px;
+    }
+
+    #signal-counter {
+        top: 13px;
+        left: 13px;
+    }
+
+    #signal-counter strong,
+    #life-counter strong {
+        font-size: 22px;
+    }
+
+    #signal-counter span,
+    #life-counter span {
+        font-size: 10px;
+    }
+
+    #life-counter {
+        top: 13px;
+        right: 13px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #audio-gate {
+        transition: none;
+    }
+
+    #signal-counter.is-hit,
+    #life-counter.is-hit,
+    #life-counter.is-healed {
+        animation: none;
+    }
+}
