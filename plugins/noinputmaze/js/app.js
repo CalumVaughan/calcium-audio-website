@@ -152,7 +152,10 @@ async function setup() {
     window.addEventListener("noinputmaze:enemyseen", () => {
         const values = new Map();
         topLevelParameters.forEach(param => {
-            values.set(param.id, randomParameterValue(param));
+            const value = param.name === "noiseInjection"
+                ? param.min + (param.max - param.min) * (0.82 + Math.random() * 0.18)
+                : randomParameterValue(param);
+            values.set(param.id, value);
         });
         encounterState = { startedAt: performance.now(), values };
     });

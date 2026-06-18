@@ -699,11 +699,19 @@ new p5(p => {
                 const wallFacing = decoration.type === "plant"
                     ? 1
                     : Math.max(0.16, Math.abs(viewX * decoration.normalX + viewY * decoration.normalY));
+                const verticalScale = 0.9 + audioValue("pitch") * 0.42;
+                const floorWallHeight = Math.min(
+                    p.height * 1.9,
+                    p.height * 0.78 * verticalScale / projection.depth
+                );
+                const floorY = horizon + floorWallHeight / 2;
+                const objectY = decoration.type === "plant"
+                    ? floorY - projection.size * 0.26
+                    : projection.centerY;
                 p.push();
-                p.translate(projection.centerX, projection.centerY);
+                p.translate(projection.centerX, objectY);
 
                 if (decoration.type === "plant") {
-                    p.translate(0, projection.size * 0.28);
                     p.noStroke();
                     p.fill(red, green, blue, 185);
                     p.quad(-projection.size * 0.2, -projection.size * 0.02,
@@ -897,6 +905,45 @@ new p5(p => {
         if (mazeWorld.ended === "won") drawWonScreen();
     }
 
+    function drawScreamingSky(horizon) {
+        if (damageEncounterAt === null) return;
+        const encounterAge = p.millis() - damageEncounterAt;
+        if (encounterAge < 0 || encounterAge >= 15000) return;
+        const strength = 1 - encounterAge / 15000;
+        const context = p.drawingContext;
+
+        context.save();
+        context.beginPath();
+        context.rect(0, 0, p.width, Math.max(0, horizon));
+        context.clip();
+
+        p.push();
+        const staticOffsetX = p.random(-p.width * 0.07, p.width * 0.07);
+        const staticOffsetY = p.random(-p.height * 0.08, 0);
+        p.tint(255, 95 + strength * 135);
+        p.image(grain, staticOffsetX, staticOffsetY, p.width * 1.08, p.height * 1.08);
+        p.tint(255, 45 + strength * 90);
+        p.image(grain, -staticOffsetX * 0.6, staticOffsetY * 0.4, p.width * 1.04, p.height * 1.04);
+        p.pop();
+
+        const tearCount = 10 + Math.floor(strength * 24);
+        p.strokeWeight(1);
+        for (let tear = 0; tear < tearCount; tear += 1) {
+            const y = p.random(Math.max(1, horizon));
+            const startX = p.random(-p.width * 0.1, p.width * 0.75);
+            const length = p.random(p.width * 0.08, p.width * 0.55) * strength;
+            p.stroke(255, p.random(35, 190) * strength);
+            p.line(startX, y, startX + length, y + p.random(-5, 5));
+        }
+
+        if (p.noise(p.frameCount * 0.39) > 0.68) {
+            p.noStroke();
+            p.fill(255, strength * 38);
+            p.rect(0, 0, p.width, horizon);
+        }
+        context.restore();
+    }
+
     function drawArchitecture(horizon, raySpacing) {
         const rayCount = Math.ceil(p.width / raySpacing) + 1;
         const tops = [];
@@ -1056,6 +1103,7 @@ new p5(p => {
         const raySpacing = p.width < 700 ? 5 : 7;
 
         p.background(0);
+        drawScreamingSky(horizon);
         const architecture = drawArchitecture(horizon, raySpacing);
         drawDecorations(architecture.depths, raySpacing, horizon);
         drawScars(architecture.depths, raySpacing, horizon);
