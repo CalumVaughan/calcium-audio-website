@@ -530,6 +530,11 @@ const MinescreamerSketch = p => {
 
     function boardIsLogicallySolvable(startRow, startCol) {
         const totalCells = config.rows * config.cols;
+        const difficulty = elements.difficulty.value;
+        const subsetsAllowed = difficulty !== "beginner";
+        const requiredLocalDeductions = difficulty === "intermediate" ? 3 : 0;
+        let localDeductions = 0;
+        let subsetUsed = false;
         const cellIndex = cell => cell.row * config.cols + cell.col;
         const cellAtIndex = index => board[Math.floor(index / config.cols)][index % config.cols];
         const adjacentIndexes = index => {
@@ -570,11 +575,17 @@ const MinescreamerSketch = p => {
                 if (remainingMines === 0) {
                     const before = simulatedRevealed.size;
                     revealSimulated(unknown);
-                    progressed ||= simulatedRevealed.size > before;
+                    if (simulatedRevealed.size > before) {
+                        progressed = true;
+                        localDeductions++;
+                    }
                 } else if (remainingMines === unknown.length) {
                     const before = simulatedFlags.size;
                     unknown.forEach(next => simulatedFlags.add(next));
-                    progressed ||= simulatedFlags.size > before;
+                    if (simulatedFlags.size > before) {
+                        progressed = true;
+                        localDeductions++;
+                    }
                 } else {
                     constraints.push({ cells: new Set(unknown), mines: remainingMines });
                 }
@@ -582,6 +593,8 @@ const MinescreamerSketch = p => {
 
             if (simulatedRevealed.size === totalCells - config.mines) return true;
             if (progressed) continue;
+            if (!subsetsAllowed) return false;
+            if (!subsetUsed && localDeductions < requiredLocalDeductions) return false;
 
             const deducedSafe = new Set();
             const deducedMines = new Set();
@@ -605,6 +618,7 @@ const MinescreamerSketch = p => {
             });
 
             if (!deducedSafe.size && !deducedMines.size) return false;
+            subsetUsed = true;
             deducedMines.forEach(index => simulatedFlags.add(index));
             if (!revealSimulated(deducedSafe)) return false;
         }
