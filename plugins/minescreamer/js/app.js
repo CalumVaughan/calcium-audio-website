@@ -607,7 +607,6 @@ const MinescreamerSketch = p => {
         audio.send(INPORTS.detonate);
         emitParticles(cell, "#ff503c", 70);
         updateStatus();
-        showMessage("YOU FOUND IT", "The minefield screamed back · start a new field to continue");
         announce("Mine detonated. Game over.");
         submitRun("loss");
     }
@@ -676,6 +675,10 @@ const MinescreamerSketch = p => {
         const row = Math.floor(p.mouseY / cellSize);
         if (row < 0 || row >= config.rows || col < 0 || col >= config.cols) return null;
         return board[row][col];
+    }
+
+    function fieldSetupIsOpen() {
+        return elements.fieldSetup.classList.contains("visible");
     }
 
     function drawFlag(x, y, size) {
@@ -793,7 +796,7 @@ const MinescreamerSketch = p => {
     };
 
     p.mousePressed = event => {
-        if (!audioEntered) return false;
+        if (!audioEntered || fieldSetupIsOpen()) return false;
         const cell = cellFromPointer();
         if (!cell) return false;
         cursorRow = cell.row;
@@ -805,7 +808,7 @@ const MinescreamerSketch = p => {
     };
 
     p.doubleClicked = event => {
-        if (event.button !== 2) {
+        if (!fieldSetupIsOpen() && event.button !== 2) {
             const cell = cellFromPointer();
             if (cell) chord(cell.row, cell.col);
         }
@@ -815,6 +818,7 @@ const MinescreamerSketch = p => {
     p.windowResized = () => resizeBoard();
 
     elements.holder.addEventListener("keydown", event => {
+        if (fieldSetupIsOpen()) return;
         const handled = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Enter", " ", "f", "F", "r", "R", "c", "C"].includes(event.key);
         if (handled) event.preventDefault();
         if (event.key === "ArrowUp") cursorRow = Math.max(0, cursorRow - 1);
