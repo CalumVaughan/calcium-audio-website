@@ -212,6 +212,22 @@
         </div>
     </div>
 
+    <div id="shame-scores" class="victory-scores shame-scores-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="shame-scores-title">
+        <div class="victory-scores-card shame-scores-card">
+            <button id="close-shame-scores" class="victory-close" type="button" aria-label="Close Wall of Shame">×</button>
+            <p class="eyebrow">Detonation confirmed · permanent record</p>
+            <h2 id="shame-scores-title">Wall of Shame</h2>
+            <p class="shame-intro">The minefield remembers. Recent casualties:</p>
+            <ol id="shame-modal-list" class="score-list victory-score-list shame-modal-list" aria-live="polite">
+                <li class="empty-score">Receiving casualty reports…</li>
+            </ol>
+            <div class="victory-actions">
+                <button id="shame-new-field" class="start-field-button" type="button">Attempt another field</button>
+                <button id="shame-continue" class="victory-secondary" type="button">Inspect the wreckage</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/p5@2.3.0/lib/p5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/guardrails.js"></script>

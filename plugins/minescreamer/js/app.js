@@ -119,6 +119,8 @@ class GlobalLeaderboard {
         this.victoryList = document.getElementById("victory-score-list");
         this.victoryTabs = [...document.querySelectorAll("[data-victory-difficulty]")];
         this.victoryDifficulty = "beginner";
+        this.shameModal = document.getElementById("shame-scores");
+        this.shameModalList = document.getElementById("shame-modal-list");
         this.tabs = [...document.querySelectorAll("[data-leaderboard-difficulty]")];
         this.tabs.forEach(tab => tab.addEventListener("click", () => {
             this.selectedDifficulty = tab.dataset.leaderboardDifficulty;
@@ -136,8 +138,15 @@ class GlobalLeaderboard {
             this.closeVictoryScores();
             elements.newGame.click();
         });
+        document.getElementById("close-shame-scores").addEventListener("click", () => this.closeShameScores());
+        document.getElementById("shame-continue").addEventListener("click", () => this.closeShameScores());
+        document.getElementById("shame-new-field").addEventListener("click", () => {
+            this.closeShameScores();
+            elements.newGame.click();
+        });
         document.addEventListener("keydown", event => {
             if (event.key === "Escape" && this.victoryModal.classList.contains("visible")) this.closeVictoryScores();
+            if (event.key === "Escape" && this.shameModal.classList.contains("visible")) this.closeShameScores();
         });
     }
 
@@ -176,6 +185,7 @@ class GlobalLeaderboard {
             this.renderSurvivors();
             this.renderLosses();
             this.renderVictoryScores();
+            this.renderShameModal();
             this.setStatus("Live", "online");
         } catch (error) {
             console.error("Minescreamer leaderboard:", error);
@@ -244,6 +254,43 @@ class GlobalLeaderboard {
     closeVictoryScores() {
         this.victoryModal.classList.remove("visible");
         this.victoryModal.setAttribute("aria-hidden", "true");
+    }
+
+    openShameScores() {
+        this.renderShameModal();
+        this.shameModal.classList.add("visible");
+        this.shameModal.setAttribute("aria-hidden", "false");
+        document.getElementById("close-shame-scores").focus();
+    }
+
+    closeShameScores() {
+        this.shameModal.classList.remove("visible");
+        this.shameModal.setAttribute("aria-hidden", "true");
+    }
+
+    renderShameModal() {
+        this.shameModalList.replaceChildren();
+        if (!this.losses.length) {
+            const empty = document.createElement("li");
+            empty.className = "empty-score";
+            empty.textContent = "No casualties reported. Suspicious.";
+            this.shameModalList.append(empty);
+            return;
+        }
+        this.losses.forEach(score => {
+            const row = document.createElement("li");
+            const rank = document.createElement("span");
+            const name = document.createElement("span");
+            const meta = document.createElement("span");
+            rank.className = "score-rank";
+            name.className = "score-name";
+            meta.className = "score-meta score-time";
+            rank.textContent = "×";
+            name.textContent = score.player_name;
+            meta.textContent = `${this.difficultyLabel(score.difficulty)} · ${this.formatTime(score.duration_seconds)} · ${score.tiles_revealed} safe`;
+            row.append(rank, name, meta);
+            this.shameModalList.append(row);
+        });
     }
 
     renderVictoryScores() {
@@ -389,6 +436,7 @@ const MinescreamerSketch = p => {
     let canvas;
     let runSubmitted = false;
     let victoryScoreTimer = null;
+    let shameScoreTimer = null;
 
     function makeBoard() {
         return Array.from({ length: config.rows }, (_, row) =>
@@ -455,7 +503,10 @@ const MinescreamerSketch = p => {
         runSubmitted = false;
         if (victoryScoreTimer) window.clearTimeout(victoryScoreTimer);
         victoryScoreTimer = null;
+        if (shameScoreTimer) window.clearTimeout(shameScoreTimer);
+        shameScoreTimer = null;
         leaderboard.closeVictoryScores();
+        leaderboard.closeShameScores();
         hideMessage();
         elements.fieldSetup.classList.toggle("visible", showSetup);
         resizeBoard();
@@ -676,6 +727,7 @@ const MinescreamerSketch = p => {
         updateStatus();
         announce("Mine detonated. Game over.");
         submitRun("loss");
+        shameScoreTimer = window.setTimeout(() => leaderboard.openShameScores(), 3000);
     }
 
     function reveal(row, col, replayOnly = false) {
