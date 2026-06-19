@@ -192,6 +192,26 @@
 
     <div id="sr-announcer" class="sr-only" aria-live="assertive"></div>
 
+    <div id="victory-scores" class="victory-scores" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="victory-scores-title">
+        <div class="victory-scores-card">
+            <button id="close-victory-scores" class="victory-close" type="button" aria-label="Close high scores">×</button>
+            <p class="eyebrow">Field cleared · global transmission</p>
+            <h2 id="victory-scores-title">Hall of Survivors</h2>
+            <div id="victory-score-tabs" class="leaderboard-tabs victory-tabs" role="tablist" aria-label="Victory leaderboard difficulty">
+                <button type="button" role="tab" aria-selected="true" data-victory-difficulty="beginner">Small</button>
+                <button type="button" role="tab" aria-selected="false" data-victory-difficulty="intermediate">Medium</button>
+                <button type="button" role="tab" aria-selected="false" data-victory-difficulty="expert">Large</button>
+            </div>
+            <ol id="victory-score-list" class="score-list victory-score-list" aria-live="polite">
+                <li class="empty-score">Receiving survival records…</li>
+            </ol>
+            <div class="victory-actions">
+                <button id="victory-new-field" class="start-field-button" type="button">Choose another field</button>
+                <button id="victory-continue" class="victory-secondary" type="button">Keep viewing board</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/p5@2.3.0/lib/p5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/guardrails.js"></script>

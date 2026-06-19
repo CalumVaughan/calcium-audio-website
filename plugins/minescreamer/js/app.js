@@ -115,12 +115,30 @@ class GlobalLeaderboard {
         this.status = document.getElementById("leaderboard-status");
         this.survivorList = document.getElementById("survivor-list");
         this.shameList = document.getElementById("shame-list");
+        this.victoryModal = document.getElementById("victory-scores");
+        this.victoryList = document.getElementById("victory-score-list");
+        this.victoryTabs = [...document.querySelectorAll("[data-victory-difficulty]")];
+        this.victoryDifficulty = "beginner";
         this.tabs = [...document.querySelectorAll("[data-leaderboard-difficulty]")];
         this.tabs.forEach(tab => tab.addEventListener("click", () => {
             this.selectedDifficulty = tab.dataset.leaderboardDifficulty;
             this.tabs.forEach(item => item.setAttribute("aria-selected", String(item === tab)));
             this.renderSurvivors();
         }));
+        this.victoryTabs.forEach(tab => tab.addEventListener("click", () => {
+            this.victoryDifficulty = tab.dataset.victoryDifficulty;
+            this.victoryTabs.forEach(item => item.setAttribute("aria-selected", String(item === tab)));
+            this.renderVictoryScores();
+        }));
+        document.getElementById("close-victory-scores").addEventListener("click", () => this.closeVictoryScores());
+        document.getElementById("victory-continue").addEventListener("click", () => this.closeVictoryScores());
+        document.getElementById("victory-new-field").addEventListener("click", () => {
+            this.closeVictoryScores();
+            elements.newGame.click();
+        });
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape" && this.victoryModal.classList.contains("visible")) this.closeVictoryScores();
+        });
     }
 
     setStatus(label, state = "") {
@@ -157,6 +175,7 @@ class GlobalLeaderboard {
             this.losses = results[3].data || [];
             this.renderSurvivors();
             this.renderLosses();
+            this.renderVictoryScores();
             this.setStatus("Live", "online");
         } catch (error) {
             console.error("Minescreamer leaderboard:", error);
@@ -210,6 +229,46 @@ class GlobalLeaderboard {
             time.textContent = this.formatTime(score.duration_seconds);
             row.append(rank, name, time);
             this.survivorList.append(row);
+        });
+    }
+
+    openVictoryScores(difficulty) {
+        this.victoryDifficulty = difficulty;
+        this.victoryTabs.forEach(tab => tab.setAttribute("aria-selected", String(tab.dataset.victoryDifficulty === difficulty)));
+        this.renderVictoryScores();
+        this.victoryModal.classList.add("visible");
+        this.victoryModal.setAttribute("aria-hidden", "false");
+        document.getElementById("close-victory-scores").focus();
+    }
+
+    closeVictoryScores() {
+        this.victoryModal.classList.remove("visible");
+        this.victoryModal.setAttribute("aria-hidden", "true");
+    }
+
+    renderVictoryScores() {
+        const scores = this.winners[this.victoryDifficulty] || [];
+        this.victoryList.replaceChildren();
+        if (!scores.length) {
+            const empty = document.createElement("li");
+            empty.className = "empty-score";
+            empty.textContent = "No survivors yet. You could be the first.";
+            this.victoryList.append(empty);
+            return;
+        }
+        scores.forEach((score, index) => {
+            const row = document.createElement("li");
+            const rank = document.createElement("span");
+            const name = document.createElement("span");
+            const time = document.createElement("span");
+            rank.className = "score-rank";
+            name.className = "score-name";
+            time.className = "score-time";
+            rank.textContent = String(index + 1).padStart(2, "0");
+            name.textContent = score.player_name;
+            time.textContent = this.formatTime(score.duration_seconds);
+            row.append(rank, name, time);
+            this.victoryList.append(row);
         });
     }
 
@@ -329,6 +388,7 @@ const MinescreamerSketch = p => {
     let flash = 0;
     let canvas;
     let runSubmitted = false;
+    let victoryScoreTimer = null;
 
     function makeBoard() {
         return Array.from({ length: config.rows }, (_, row) =>
@@ -393,6 +453,9 @@ const MinescreamerSketch = p => {
         particles = [];
         flash = 0;
         runSubmitted = false;
+        if (victoryScoreTimer) window.clearTimeout(victoryScoreTimer);
+        victoryScoreTimer = null;
+        leaderboard.closeVictoryScores();
         hideMessage();
         elements.fieldSetup.classList.toggle("visible", showSetup);
         resizeBoard();
@@ -577,6 +640,10 @@ const MinescreamerSketch = p => {
         showMessage("FIELD CLEARED", `${elapsedSeconds} seconds · ${flags} flags placed`);
         announce(`Victory. Field cleared in ${elapsedSeconds} seconds.`);
         submitRun("win");
+        victoryScoreTimer = window.setTimeout(() => {
+            hideMessage();
+            leaderboard.openVictoryScores(elements.difficulty.value);
+        }, 2500);
         return true;
     }
 
