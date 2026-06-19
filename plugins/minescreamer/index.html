@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#10100f">
+    <meta name="description" content="Minescreamer — Minesweeper played by ear.">
+    <title>Minescreamer</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+    <div class="noise" aria-hidden="true"></div>
+
+    <div id="audio-gate" class="audio-gate">
+        <div class="gate-card">
+            <p class="eyebrow">An audio-first minefield</p>
+            <h1>MINESCREAMER</h1>
+            <p>Numbers are gone. Listen to each revealed tile: the rhythm tells you how many mines touch it.</p>
+            <button id="enter-game" class="primary-button" type="button" disabled>
+                <span class="button-dot"></span>
+                <span id="enter-label">Loading sound engine…</span>
+            </button>
+            <p class="gate-note">Headphones recommended. Start quietly.</p>
+        </div>
+    </div>
+
+    <div class="app-shell">
+        <header class="topbar">
+            <a class="brand" href="#" aria-label="Minescreamer home">
+                <span class="brand-mark" aria-hidden="true">✦</span>
+                <span>MINESCREAMER</span>
+            </a>
+
+            <div class="top-actions">
+                <label class="select-label" for="difficulty">Field</label>
+                <select id="difficulty" aria-label="Difficulty">
+                    <option value="beginner">Small · 9×9 · 10 mines</option>
+                    <option value="intermediate" selected>Medium · 16×16 · 40 mines</option>
+                    <option value="expert">Large · 30×16 · 99 mines</option>
+                </select>
+                <button id="new-game" class="utility-button" type="button">New field</button>
+                <button id="music-toggle" class="icon-button" type="button" aria-pressed="true" aria-label="Mute background music">♪</button>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero-copy" aria-labelledby="game-title">
+                <div>
+                    <p class="eyebrow">Listen. Mark. Survive.</p>
+                    <h2 id="game-title">The minefield<br><em>has a voice.</em></h2>
+                </div>
+                <p class="hero-note">Each pulse is one adjacent mine. No pulse means the tile is clear.</p>
+            </section>
+
+            <section class="game-layout">
+                <div class="board-column">
+                    <div class="status-strip" aria-label="Game statistics">
+                        <div class="stat">
+                            <span class="stat-label">Mines</span>
+                            <strong id="mine-count">040</strong>
+                        </div>
+                        <div class="status-center">
+                            <span id="status-pip" class="status-pip"></span>
+                            <span id="status-text">Field unbroken</span>
+                        </div>
+                        <div class="stat stat-right">
+                            <span class="stat-label">Time</span>
+                            <strong id="timer">000</strong>
+                        </div>
+                    </div>
+
+                    <div id="board-shell" class="board-shell">
+                        <div id="canvas-holder" role="application" aria-label="Minescreamer board. Use arrow keys to move, Enter to reveal, F to flag, and R to replay a revealed clue." tabindex="0"></div>
+                        <div id="board-message" class="board-message" aria-live="polite"></div>
+                    </div>
+
+                    <div class="board-legend">
+                        <span><kbd>Click</kbd> reveal / replay</span>
+                        <span><kbd>Right click</kbd> flag</span>
+                        <span><kbd>Double click</kbd> chord</span>
+                        <span><kbd>Arrows</kbd> navigate</span>
+                    </div>
+                </div>
+
+                <aside class="side-panel">
+                    <div class="panel-section">
+                        <span class="section-number">01</span>
+                        <div>
+                            <h3>Read the rhythm</h3>
+                            <p>A revealed tile plays once per adjacent mine. Texture gets harsher as danger rises.</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-section sound-section">
+                        <span class="section-number">02</span>
+                        <div class="sound-content">
+                            <div class="section-heading">
+                                <div>
+                                    <h3>Train your ear</h3>
+                                    <p>Preview any clue before entering the field.</p>
+                                </div>
+                            </div>
+                            <div id="sound-guide" class="sound-guide" aria-label="Clue sound preview">
+                                <button type="button" data-sound="1" aria-label="Preview one adjacent mine"><span>1</span></button>
+                                <button type="button" data-sound="2" aria-label="Preview two adjacent mines"><span>2</span></button>
+                                <button type="button" data-sound="3" aria-label="Preview three adjacent mines"><span>3</span></button>
+                                <button type="button" data-sound="4" aria-label="Preview four adjacent mines"><span>4</span></button>
+                                <button type="button" data-sound="5" aria-label="Preview five adjacent mines"><span>5</span></button>
+                                <button type="button" data-sound="6" aria-label="Preview six adjacent mines"><span>6</span></button>
+                                <button type="button" data-sound="7" aria-label="Preview seven adjacent mines"><span>7</span></button>
+                                <button type="button" data-sound="8" aria-label="Preview eight adjacent mines"><span>8</span></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-section rule-section">
+                        <span class="section-number">03</span>
+                        <div>
+                            <h3>Trust the silence</h3>
+                            <p>A silent reveal opens the surrounding safe area. Every field is solver-verified—no blind guesses required.</p>
+                        </div>
+                    </div>
+
+                    <div id="audio-status" class="audio-status" aria-live="polite">
+                        <span class="audio-led"></span>
+                        <span>Sound engine loading</span>
+                    </div>
+                </aside>
+            </section>
+        </main>
+
+        <footer>
+            <span>Procedural audio by RNBO</span>
+            <span>Built to be played by ear</span>
+        </footer>
+    </div>
+
+    <div id="sr-announcer" class="sr-only" aria-live="assertive"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/p5@2.3.0/lib/p5.min.js"></script>
+    <script src="js/guardrails.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
