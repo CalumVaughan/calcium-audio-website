@@ -92,6 +92,7 @@ const elements = {
     enterLabel: document.getElementById("enter-label"),
     audioStatus: document.getElementById("audio-status"),
     difficulty: document.getElementById("difficulty"),
+    playerName: document.getElementById("player-name"),
     fieldSetup: document.getElementById("field-setup"),
     startField: document.getElementById("start-field"),
     newGame: document.getElementById("new-game"),
@@ -104,6 +105,148 @@ const elements = {
     holder: document.getElementById("canvas-holder"),
     announcer: document.getElementById("sr-announcer")
 };
+
+class GlobalLeaderboard {
+    constructor(config) {
+        this.client = config && window.supabase ? window.supabase.createClient(config.url, config.publishableKey) : null;
+        this.winners = { beginner: [], intermediate: [], expert: [] };
+        this.losses = [];
+        this.selectedDifficulty = "beginner";
+        this.status = document.getElementById("leaderboard-status");
+        this.survivorList = document.getElementById("survivor-list");
+        this.shameList = document.getElementById("shame-list");
+        this.tabs = [...document.querySelectorAll("[data-leaderboard-difficulty]")];
+        this.tabs.forEach(tab => tab.addEventListener("click", () => {
+            this.selectedDifficulty = tab.dataset.leaderboardDifficulty;
+            this.tabs.forEach(item => item.setAttribute("aria-selected", String(item === tab)));
+            this.renderSurvivors();
+        }));
+    }
+
+    setStatus(label, state = "") {
+        this.status.className = `leaderboard-status ${state}`.trim();
+        this.status.innerHTML = `<span></span> ${label}`;
+    }
+
+    async load() {
+        if (!this.client) {
+            this.setStatus("Offline", "error");
+            return;
+        }
+        try {
+            this.setStatus("Receiving");
+            const difficulties = ["beginner", "intermediate", "expert"];
+            const winnerRequests = difficulties.map(difficulty =>
+                this.client.from("minescreamer_runs")
+                    .select("player_name,difficulty,duration_seconds,created_at")
+                    .eq("outcome", "win")
+                    .eq("difficulty", difficulty)
+                    .order("duration_seconds", { ascending: true })
+                    .order("created_at", { ascending: true })
+                    .limit(8)
+            );
+            const lossRequest = this.client.from("minescreamer_runs")
+                .select("player_name,difficulty,duration_seconds,tiles_revealed,created_at")
+                .eq("outcome", "loss")
+                .order("created_at", { ascending: false })
+                .limit(8);
+            const results = await Promise.all([...winnerRequests, lossRequest]);
+            const error = results.find(result => result.error)?.error;
+            if (error) throw error;
+            difficulties.forEach((difficulty, index) => { this.winners[difficulty] = results[index].data || []; });
+            this.losses = results[3].data || [];
+            this.renderSurvivors();
+            this.renderLosses();
+            this.setStatus("Live", "online");
+        } catch (error) {
+            console.error("Minescreamer leaderboard:", error);
+            this.setStatus("Connection lost", "error");
+        }
+    }
+
+    async submit(run) {
+        if (!this.client) return false;
+        const { error } = await this.client.from("minescreamer_runs").insert(run);
+        if (error) {
+            console.error("Minescreamer score submission:", error);
+            this.setStatus("Submission failed", "error");
+            return false;
+        }
+        await this.load();
+        return true;
+    }
+
+    formatTime(seconds) {
+        if (seconds < 60) return `${seconds}s`;
+        const minutes = Math.floor(seconds / 60);
+        const remainder = seconds % 60;
+        return `${minutes}:${String(remainder).padStart(2, "0")}`;
+    }
+
+    difficultyLabel(difficulty) {
+        return ({ beginner: "Small", intermediate: "Medium", expert: "Large" })[difficulty] || difficulty;
+    }
+
+    renderSurvivors() {
+        const scores = this.winners[this.selectedDifficulty] || [];
+        this.survivorList.replaceChildren();
+        if (!scores.length) {
+            const empty = document.createElement("li");
+            empty.className = "empty-score";
+            empty.textContent = "No survivors yet. The field is waiting.";
+            this.survivorList.append(empty);
+            return;
+        }
+        scores.forEach((score, index) => {
+            const row = document.createElement("li");
+            const rank = document.createElement("span");
+            const name = document.createElement("span");
+            const time = document.createElement("span");
+            rank.className = "score-rank";
+            name.className = "score-name";
+            time.className = "score-time";
+            rank.textContent = String(index + 1).padStart(2, "0");
+            name.textContent = score.player_name;
+            time.textContent = this.formatTime(score.duration_seconds);
+            row.append(rank, name, time);
+            this.survivorList.append(row);
+        });
+    }
+
+    renderLosses() {
+        this.shameList.replaceChildren();
+        if (!this.losses.length) {
+            const empty = document.createElement("li");
+            empty.className = "empty-score";
+            empty.textContent = "No casualties reported. Suspicious.";
+            this.shameList.append(empty);
+            return;
+        }
+        this.losses.forEach((score, index) => {
+            const row = document.createElement("li");
+            const rank = document.createElement("span");
+            const name = document.createElement("span");
+            const meta = document.createElement("span");
+            rank.className = "score-rank";
+            name.className = "score-name";
+            meta.className = "score-meta score-time";
+            rank.textContent = "×";
+            name.textContent = score.player_name;
+            meta.textContent = `${this.difficultyLabel(score.difficulty)} · ${this.formatTime(score.duration_seconds)} · ${score.tiles_revealed} safe`;
+            row.append(rank, name, meta);
+            this.shameList.append(row);
+        });
+    }
+}
+
+const leaderboard = new GlobalLeaderboard(window.MINESCREAMER_SUPABASE);
+const PLAYER_NAME_KEY = "minescreamer-player-name";
+elements.playerName.value = localStorage.getItem(PLAYER_NAME_KEY) || "";
+
+function currentPlayerName() {
+    const cleaned = elements.playerName.value.trim().replace(/[<>]/g, "").slice(0, 20);
+    return cleaned || "ANONYMOUS SCREAMER";
+}
 
 let musicEnabled = true;
 let audioEntered = false;
@@ -185,6 +328,7 @@ const MinescreamerSketch = p => {
     let particles = [];
     let flash = 0;
     let canvas;
+    let runSubmitted = false;
 
     function makeBoard() {
         return Array.from({ length: config.rows }, (_, row) =>
@@ -248,6 +392,7 @@ const MinescreamerSketch = p => {
         cursorCol = 0;
         particles = [];
         flash = 0;
+        runSubmitted = false;
         hideMessage();
         elements.fieldSetup.classList.toggle("visible", showSetup);
         resizeBoard();
@@ -431,11 +576,30 @@ const MinescreamerSketch = p => {
         updateStatus();
         showMessage("FIELD CLEARED", `${elapsedSeconds} seconds · ${flags} flags placed`);
         announce(`Victory. Field cleared in ${elapsedSeconds} seconds.`);
+        submitRun("win");
         return true;
+    }
+
+    function submitRun(outcome) {
+        if (runSubmitted) return;
+        runSubmitted = true;
+        const run = {
+            player_name: currentPlayerName(),
+            difficulty: elements.difficulty.value,
+            outcome,
+            duration_seconds: elapsedSeconds,
+            tiles_revealed: revealedSafe,
+            flags_placed: flags,
+            board_version: "1.1-no-guess"
+        };
+        leaderboard.submit(run).then(submitted => {
+            if (submitted) announce(outcome === "win" ? "Victory added to the global leaderboard." : "Your failure has joined the Wall of Shame.");
+        });
     }
 
     function lose(cell) {
         gameState = "lost";
+        elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
         cell.exploded = true;
         board.flat().forEach(item => { if (item.mine) item.revealed = true; });
         flash = 1;
@@ -445,6 +609,7 @@ const MinescreamerSketch = p => {
         updateStatus();
         showMessage("YOU FOUND IT", "The minefield screamed back · start a new field to continue");
         announce("Mine detonated. Game over.");
+        submitRun("loss");
     }
 
     function reveal(row, col, replayOnly = false) {
@@ -671,6 +836,9 @@ const MinescreamerSketch = p => {
     });
     elements.difficulty.addEventListener("change", () => resetGame(elements.difficulty.value, true));
     elements.startField.addEventListener("click", () => {
+        const playerName = currentPlayerName();
+        elements.playerName.value = playerName;
+        localStorage.setItem(PLAYER_NAME_KEY, playerName);
         resetGame(elements.difficulty.value, false);
         elements.holder.focus();
     });
@@ -692,3 +860,4 @@ const MinescreamerSketch = p => {
 
 new p5(MinescreamerSketch);
 bootAudio();
+leaderboard.load();
