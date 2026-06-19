@@ -796,7 +796,7 @@ const MinescreamerSketch = p => {
     };
 
     p.mousePressed = event => {
-        if (!audioEntered || fieldSetupIsOpen()) return false;
+        if (!audioEntered || fieldSetupIsOpen() || event.target !== canvas.elt) return;
         const cell = cellFromPointer();
         if (!cell) return false;
         cursorRow = cell.row;
@@ -808,7 +808,8 @@ const MinescreamerSketch = p => {
     };
 
     p.doubleClicked = event => {
-        if (!fieldSetupIsOpen() && event.button !== 2) {
+        if (fieldSetupIsOpen() || event.target !== canvas.elt) return;
+        if (event.button !== 2) {
             const cell = cellFromPointer();
             if (cell) chord(cell.row, cell.col);
         }
