@@ -170,13 +170,13 @@ class GlobalLeaderboard {
                     .eq("difficulty", difficulty)
                     .order("duration_seconds", { ascending: true })
                     .order("created_at", { ascending: true })
-                    .limit(8)
+                    .limit(20)
             );
             const lossRequest = this.client.from("minescreamer_runs")
                 .select("player_name,difficulty,duration_seconds,tiles_revealed,created_at")
                 .eq("outcome", "loss")
                 .order("created_at", { ascending: false })
-                .limit(8);
+                .limit(20);
             const results = await Promise.all([...winnerRequests, lossRequest]);
             const error = results.find(result => result.error)?.error;
             if (error) throw error;
