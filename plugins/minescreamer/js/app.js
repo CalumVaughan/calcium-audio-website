@@ -92,6 +92,8 @@ const elements = {
     enterLabel: document.getElementById("enter-label"),
     audioStatus: document.getElementById("audio-status"),
     difficulty: document.getElementById("difficulty"),
+    fieldSetup: document.getElementById("field-setup"),
+    startField: document.getElementById("start-field"),
     newGame: document.getElementById("new-game"),
     musicToggle: document.getElementById("music-toggle"),
     mineCount: document.getElementById("mine-count"),
@@ -112,8 +114,8 @@ function setAudioStatus(label, state = "") {
 }
 
 function formatCounter(value) {
-    const clamped = Math.max(-99, Math.min(999, value));
-    return clamped < 0 ? `-${String(Math.abs(clamped)).padStart(2, "0")}` : String(clamped).padStart(3, "0");
+    const rounded = Math.trunc(value);
+    return rounded < 0 ? `-${String(Math.abs(rounded)).padStart(2, "0")}` : String(rounded).padStart(3, "0");
 }
 
 function announce(message) {
@@ -146,7 +148,8 @@ elements.enter.addEventListener("click", () => {
     audioEntered = true;
     elements.gate.classList.add("hidden");
     if (musicEnabled) audio.send(INPORTS.bgMusic);
-    elements.holder.focus();
+    if (elements.fieldSetup.classList.contains("visible")) elements.startField.focus();
+    else elements.holder.focus();
 });
 
 elements.musicToggle.addEventListener("click", () => {
@@ -232,7 +235,7 @@ const MinescreamerSketch = p => {
         if (musicEnabled) window.setTimeout(() => audio.send(INPORTS.bgMusic), 45);
     }
 
-    function resetGame(nextDifficulty = elements.difficulty.value) {
+    function resetGame(nextDifficulty = elements.difficulty.value, showSetup = false) {
         config = DIFFICULTIES[nextDifficulty];
         board = makeBoard();
         minesPlaced = false;
@@ -246,10 +249,11 @@ const MinescreamerSketch = p => {
         particles = [];
         flash = 0;
         hideMessage();
+        elements.fieldSetup.classList.toggle("visible", showSetup);
         resizeBoard();
         updateStatus();
         restartMusic();
-        announce("New minefield. First reveal is safe.");
+        announce(showSetup ? "Choose a field difficulty." : "New minefield. First reveal is safe.");
     }
 
     function neighbors(row, col) {
@@ -421,7 +425,7 @@ const MinescreamerSketch = p => {
     function checkWin() {
         if (revealedSafe !== config.rows * config.cols - config.mines) return false;
         gameState = "won";
-        elapsedSeconds = Math.min(999, Math.floor((Date.now() - startTime) / 1000));
+        elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
         audio.send(INPORTS.stopBGMusic);
         window.setTimeout(() => audio.send(INPORTS.victory), 60);
         updateStatus();
@@ -600,7 +604,7 @@ const MinescreamerSketch = p => {
         canvas.elt.addEventListener("contextmenu", event => event.preventDefault());
         p.pixelDensity(Math.min(window.devicePixelRatio || 1, 2));
         p.frameRate(30);
-        resetGame(elements.difficulty.value);
+        resetGame(elements.difficulty.value, true);
     };
 
     p.draw = () => {
@@ -609,7 +613,7 @@ const MinescreamerSketch = p => {
         drawParticles();
 
         if (gameState === "playing") {
-            const nextSeconds = Math.min(999, Math.floor((Date.now() - startTime) / 1000));
+            const nextSeconds = Math.floor((Date.now() - startTime) / 1000);
             if (nextSeconds !== elapsedSeconds) {
                 elapsedSeconds = nextSeconds;
                 elements.timer.textContent = formatCounter(elapsedSeconds);
@@ -661,8 +665,15 @@ const MinescreamerSketch = p => {
         if (event.key === "c" || event.key === "C") chord(cursorRow, cursorCol);
     });
 
-    elements.newGame.addEventListener("click", () => resetGame(elements.difficulty.value));
-    elements.difficulty.addEventListener("change", () => resetGame(elements.difficulty.value));
+    elements.newGame.addEventListener("click", () => {
+        resetGame(elements.difficulty.value, true);
+        elements.startField.focus();
+    });
+    elements.difficulty.addEventListener("change", () => resetGame(elements.difficulty.value, true));
+    elements.startField.addEventListener("click", () => {
+        resetGame(elements.difficulty.value, false);
+        elements.holder.focus();
+    });
 
     window.__minescreamer = {
         getState: () => ({

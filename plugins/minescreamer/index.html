@@ -32,16 +32,7 @@
                 <span>MINESCREAMER</span>
             </a>
 
-            <div class="top-actions">
-                <label class="select-label" for="difficulty">Field</label>
-                <select id="difficulty" aria-label="Difficulty">
-                    <option value="beginner">Small · 9×9 · 10 mines</option>
-                    <option value="intermediate" selected>Medium · 16×16 · 40 mines</option>
-                    <option value="expert">Large · 30×16 · 99 mines</option>
-                </select>
-                <button id="new-game" class="utility-button" type="button">New field</button>
-                <button id="music-toggle" class="icon-button" type="button" aria-pressed="true" aria-label="Mute background music">♪</button>
-            </div>
+            <span class="top-tagline">Procedural audio puzzle</span>
         </header>
 
         <main>
@@ -64,14 +55,30 @@
                             <span id="status-pip" class="status-pip"></span>
                             <span id="status-text">Field unbroken</span>
                         </div>
-                        <div class="stat stat-right">
+                        <div class="stat stat-right game-actions">
                             <span class="stat-label">Time</span>
                             <strong id="timer">000</strong>
+                            <button id="music-toggle" class="status-button" type="button" aria-pressed="true" aria-label="Mute background music">♪</button>
+                            <button id="new-game" class="status-button new-field-button" type="button" aria-label="Choose a new field">↻</button>
                         </div>
                     </div>
 
                     <div id="board-shell" class="board-shell">
                         <div id="canvas-holder" role="application" aria-label="Minescreamer board. Use arrow keys to move, Enter to reveal, F to flag, and R to replay a revealed clue." tabindex="0"></div>
+                        <div id="field-setup" class="field-setup visible">
+                            <div class="field-setup-card">
+                                <p class="eyebrow">Select your field</p>
+                                <h3>How deep do you want to go?</h3>
+                                <label for="difficulty">Difficulty</label>
+                                <select id="difficulty" aria-label="Difficulty">
+                                    <option value="beginner">Small · 9×9 · 10 mines</option>
+                                    <option value="intermediate" selected>Medium · 16×16 · 40 mines</option>
+                                    <option value="expert">Large · 30×16 · 99 mines</option>
+                                </select>
+                                <button id="start-field" class="start-field-button" type="button">Enter field</button>
+                                <p>Every field is solver-verified. Your first reveal is safe.</p>
+                            </div>
+                        </div>
                         <div id="board-message" class="board-message" aria-live="polite"></div>
                     </div>
 
