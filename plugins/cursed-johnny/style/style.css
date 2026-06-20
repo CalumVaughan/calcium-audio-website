@@ -127,10 +127,10 @@ h1 {
 }
 
 .audio-button-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 7px;
+    display: block;
 }
+
+.audio-button-row button { width: 100%; }
 
 .audio-controls label {
     display: flex;
@@ -138,12 +138,6 @@ h1 {
 }
 
 .audio-controls output { color: var(--acid); }
-
-#audio-toggle.playing {
-    border-color: var(--acid);
-    color: #111;
-    background: var(--acid);
-}
 
 #audio-status {
     margin: 0;

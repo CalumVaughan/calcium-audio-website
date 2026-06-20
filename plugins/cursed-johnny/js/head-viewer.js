@@ -6,7 +6,6 @@ const stage = document.getElementById("head-stage");
 const loadingMessage = document.getElementById("loading-message");
 const textureSelect = document.getElementById("texture-select");
 const resetButton = document.getElementById("reset-view");
-const audioToggle = document.getElementById("audio-toggle");
 const randomizeButton = document.getElementById("randomize-all");
 const bpmControl = document.getElementById("bpm-control");
 const bpmOutput = document.getElementById("bpm-output");
@@ -74,6 +73,7 @@ const defaultCameraPosition = new THREE.Vector3();
 let audioContext = null;
 let rnboDevice = null;
 let audioInitPromise = null;
+let audioStartPromise = null;
 let audioRunning = false;
 let automationFrame = null;
 let mappingGeneration = 0;
@@ -163,8 +163,6 @@ tabButtons.forEach((button) => {
     });
 });
 
-audioToggle.addEventListener("click", toggleAudio);
-
 randomizeButton.addEventListener("click", async () => {
     regenerateMappings();
     randomizeButton.textContent = "Randomizing…";
@@ -223,40 +221,54 @@ function updateSliderOutput(slider) {
     slider.previousElementSibling.querySelector("output").value = `${Math.round(Number(slider.value) * 100)}%`;
 }
 
-async function toggleAudio() {
-    if (audioRunning) {
-        await audioContext.suspend();
-        audioRunning = false;
-        audioToggle.dataset.state = "paused";
-        audioToggle.textContent = "Start audio";
-        audioToggle.classList.remove("playing");
-        audioStatus.textContent = "Audio paused";
-        return;
-    }
-
-    try {
-        await startAudio();
-    } catch (error) {
-        console.error("Could not start RNBO audio", error);
-        audioToggle.textContent = "Start audio";
-        audioStatus.textContent = "Audio failed · check console";
-    }
+function startAudio(allowAutoplayFallback = false) {
+    if (audioRunning) return true;
+    if (audioStartPromise) return audioStartPromise;
+    audioStartPromise = activateAudio(allowAutoplayFallback).finally(() => {
+        audioStartPromise = null;
+    });
+    return audioStartPromise;
 }
 
-async function startAudio() {
-    audioToggle.textContent = "Loading…";
+async function activateAudio(allowAutoplayFallback) {
+    audioStatus.textContent = "Loading audio…";
     await initializeAudioEngine();
-    await audioContext.resume();
+    const resumePromise = audioContext.resume();
+    if (allowAutoplayFallback) {
+        await Promise.race([resumePromise, new Promise((resolve) => setTimeout(resolve, 350))]);
+        if (audioContext.state !== "running") {
+            audioStatus.textContent = "Audio starts on first interaction";
+            armAudioUnlock();
+            return false;
+        }
+    } else {
+        await resumePromise;
+    }
     if (window.RNBO.TransportEvent) {
         rnboDevice.scheduleEvent(new window.RNBO.TransportEvent(window.RNBO.TimeNow, 1));
     }
     applyBpm(Number(bpmControl.value));
     audioRunning = true;
-    audioToggle.dataset.state = "playing";
-    audioToggle.textContent = "Pause audio";
-    audioToggle.classList.add("playing");
     audioStatus.textContent = "Playing · BPM-random warps";
     if (!automationFrame) automationFrame = requestAnimationFrame(automationLoop);
+    return true;
+}
+
+function armAudioUnlock() {
+    const unlock = async () => {
+        removeEventListener("pointerdown", unlock);
+        removeEventListener("touchstart", unlock);
+        removeEventListener("keydown", unlock);
+        try {
+            await startAudio();
+        } catch (error) {
+            console.error("Could not start RNBO audio", error);
+            audioStatus.textContent = "Audio failed · check console";
+        }
+    };
+    addEventListener("pointerdown", unlock, { once: true });
+    addEventListener("touchstart", unlock, { once: true });
+    addEventListener("keydown", unlock, { once: true });
 }
 
 function initializeAudioEngine() {
@@ -292,7 +304,6 @@ function initializeAudioEngine() {
 
         applyBpm(Number(bpmControl.value));
         audioStatus.textContent = `${dependencies.length} samples loaded`;
-        audioToggle.dataset.samples = String(dependencies.length);
     })().catch((error) => {
         audioInitPromise = null;
         throw error;
@@ -596,3 +607,7 @@ function render() {
 }
 
 render();
+startAudio(true).catch((error) => {
+    console.error("Could not prepare RNBO audio", error);
+    audioStatus.textContent = "Audio failed · check console";
+});
