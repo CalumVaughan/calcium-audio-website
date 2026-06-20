@@ -409,15 +409,15 @@ function rebuildProceduralWorld() {
     visualSystems = [];
 
     const palettes = [
-        [0xff2957, 0x37ff8b, 0x5b4bff, 0xffd23f, 0x00d9ff],
-        [0xff6b00, 0xf7ff00, 0x00ffea, 0xff00a8, 0x8a2bff],
-        [0xffffff, 0xff1744, 0x00e5ff, 0xc6ff00, 0x651fff],
-        [0xff4fd8, 0x72f1b8, 0xfff275, 0x6c5ce7, 0xff7b54],
-        [0x00ff66, 0xff003c, 0x00a8ff, 0xffe600, 0xe100ff]
+        [0x180003, 0x6f0008, 0xd01818, 0xd8c8a8, 0x263300],
+        [0x090006, 0x3a071f, 0x7b1237, 0x9b8b73, 0x4b5d12],
+        [0x030303, 0x510000, 0xa30d0d, 0x392044, 0xc1ae8d],
+        [0x100005, 0x4c0011, 0x811331, 0x171f08, 0x8ca33a],
+        [0x020202, 0x2d001d, 0x65002f, 0x920b0b, 0xb8aa91]
     ];
     visualPalette = palettes[Math.floor(Math.random() * palettes.length)];
-    backgroundScene.background = new THREE.Color(visualPalette[Math.floor(Math.random() * visualPalette.length)])
-        .multiplyScalar(randomBetween(0.018, 0.07));
+    backgroundScene.background = new THREE.Color(0x010001)
+        .lerp(new THREE.Color(visualPalette[Math.floor(Math.random() * visualPalette.length)]), randomBetween(0.035, 0.11));
     visualSpin = Math.random() < 0.5 ? -1 : 1;
     visualSymmetry = Math.floor(randomBetween(3, 13));
 
@@ -431,10 +431,10 @@ function rebuildProceduralWorld() {
 
 function buildPolyhedronStorm() {
     const geometries = [
-        new THREE.IcosahedronGeometry(0.16, 0),
-        new THREE.OctahedronGeometry(0.18, 0),
+        new THREE.ConeGeometry(0.11, 0.72, 3),
+        new THREE.OctahedronGeometry(0.17, 0),
         new THREE.TetrahedronGeometry(0.2, 0),
-        new THREE.BoxGeometry(0.22, 0.22, 0.22)
+        new THREE.ConeGeometry(0.16, 1.05, 4)
     ];
     const geometry = geometries[Math.floor(Math.random() * geometries.length)];
     geometries.filter((item) => item !== geometry).forEach((item) => item.dispose());
@@ -443,8 +443,8 @@ function buildPolyhedronStorm() {
         vertexColors: true,
         wireframe: Math.random() < 0.48,
         transparent: true,
-        opacity: randomBetween(0.35, 0.88),
-        blending: THREE.AdditiveBlending,
+        opacity: randomBetween(0.3, 0.72),
+        blending: THREE.NormalBlending,
         depthWrite: false
     });
     const mesh = new THREE.InstancedMesh(geometry, material, count);
@@ -455,7 +455,7 @@ function buildPolyhedronStorm() {
         dummy.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, randomBetween(-2.8, 1));
         const scale = randomBetween(0.35, 2.5) * (0.7 + radius * 0.08);
         dummy.scale.setScalar(scale);
-        dummy.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
+        dummy.rotation.set(randomBetween(-0.4, 0.4), randomBetween(-0.4, 0.4), angle - Math.PI * 0.5);
         dummy.updateMatrix();
         mesh.setMatrixAt(index, dummy.matrix);
         mesh.setColorAt(index, new THREE.Color(visualPalette[index % visualPalette.length]));
@@ -474,7 +474,7 @@ function buildRitualRings() {
             color: visualPalette[index % visualPalette.length],
             transparent: true,
             opacity: randomBetween(0.24, 0.9),
-            blending: THREE.AdditiveBlending,
+            blending: THREE.NormalBlending,
             depthWrite: false
         });
         const ring = new THREE.Mesh(geometry, material);
@@ -510,7 +510,7 @@ function buildParticleVortex() {
         vertexColors: true,
         transparent: true,
         opacity: randomBetween(0.5, 1),
-        blending: THREE.AdditiveBlending,
+        blending: THREE.NormalBlending,
         depthWrite: false,
         sizeAttenuation: true
     });
@@ -521,24 +521,27 @@ function buildParticleVortex() {
 
 function buildLaserMandala() {
     const group = new THREE.Group();
-    const rayCount = visualSymmetry * Math.floor(randomBetween(2, 6));
-    for (let index = 0; index < rayCount; index++) {
-        const angle = (index / rayCount) * Math.PI * 2;
-        const inner = randomBetween(0.4, 1.3);
-        const outer = randomBetween(3.2, 7.2);
-        const points = [
-            new THREE.Vector3(Math.cos(angle) * inner, Math.sin(angle) * inner, 0),
-            new THREE.Vector3(Math.cos(angle + randomBetween(-0.14, 0.14)) * outer, Math.sin(angle + randomBetween(-0.14, 0.14)) * outer, randomBetween(-1.5, 0))
-        ];
+    const pointCount = Math.max(5, visualSymmetry);
+    const radius = randomBetween(3.3, 6.5);
+    const vertices = Array.from({ length: pointCount }, (_, index) => {
+        const angle = (index / pointCount) * Math.PI * 2 - Math.PI * 0.5;
+        return new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, randomBetween(-1.2, -0.2));
+    });
+    const lines = [];
+    for (let index = 0; index < pointCount; index++) {
+        lines.push([vertices[index], vertices[(index + 2) % pointCount]]);
+        lines.push([new THREE.Vector3(0, 0, -0.5), vertices[index]]);
+    }
+    lines.forEach((points, index) => {
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const material = new THREE.LineBasicMaterial({
             color: visualPalette[index % visualPalette.length],
             transparent: true,
-            opacity: randomBetween(0.2, 0.9),
-            blending: THREE.AdditiveBlending
+            opacity: randomBetween(0.18, 0.62),
+            blending: THREE.NormalBlending
         });
         group.add(new THREE.Line(geometry, material));
-    }
+    });
     proceduralRoot.add(group);
     visualSystems.push({ type: "lasers", object: group, baseScale: randomBetween(0.8, 1.25), speed: randomBetween(0.04, 0.2) });
 }

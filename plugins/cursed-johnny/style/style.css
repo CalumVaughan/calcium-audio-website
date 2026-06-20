@@ -28,8 +28,10 @@ body::before {
     inset: 0;
     pointer-events: none;
     z-index: 1;
-    background: repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 4px);
-    mix-blend-mode: overlay;
+    background:
+        radial-gradient(circle at 50% 46%, transparent 20%, rgba(20, 0, 3, .42) 58%, rgba(0, 0, 0, .92) 100%),
+        repeating-linear-gradient(0deg, rgba(120, 0, 10, .035) 0 1px, transparent 1px 4px);
+    mix-blend-mode: multiply;
 }
 
 #viewer-shell {
@@ -150,11 +152,13 @@ h1 {
 .texture-control { display: grid; gap: 8px; }
 
 .warp-ui {
-    display: flex;
+    display: none;
     min-height: 0;
     flex-direction: column;
     border-top: 1px solid var(--line);
 }
+
+#reset-view { display: none; }
 
 .control-tabs {
     display: grid;
