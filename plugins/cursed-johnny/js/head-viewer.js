@@ -10,7 +10,6 @@ const audioToggle = document.getElementById("audio-toggle");
 const randomizeButton = document.getElementById("randomize-all");
 const bpmControl = document.getElementById("bpm-control");
 const bpmOutput = document.getElementById("bpm-output");
-const warpModeButton = document.getElementById("warp-mode");
 const audioStatus = document.getElementById("audio-status");
 const morphSliders = [...document.querySelectorAll("[data-morph]")];
 const allSliders = morphSliders;
@@ -74,16 +73,11 @@ const defaultCameraPosition = new THREE.Vector3();
 
 let audioContext = null;
 let rnboDevice = null;
-let analyser = null;
-let frequencyData = null;
 let audioInitPromise = null;
 let audioRunning = false;
 let automationFrame = null;
-let warpMode = "audio";
 let mappingGeneration = 0;
 let mappingEpoch = performance.now();
-let bassEnvelope = 0;
-let trebleEnvelope = 0;
 let morphMappings = [];
 
 const proceduralRoot = new THREE.Group();
@@ -193,20 +187,6 @@ bpmControl.addEventListener("input", () => {
     mappingEpoch = performance.now();
 });
 
-warpModeButton.addEventListener("click", () => {
-    warpMode = warpMode === "audio" ? "random" : "audio";
-    warpModeButton.dataset.mode = warpMode;
-    warpModeButton.setAttribute("aria-pressed", String(warpMode === "random"));
-    warpModeButton.textContent = warpMode === "audio"
-        ? "Mode: Audioreactive"
-        : "Mode: Completely random";
-    mappingEpoch = performance.now();
-    morphMappings.forEach((mapping) => mapping.lastStep = -1);
-    audioStatus.textContent = warpMode === "audio"
-        ? "Bass + treble controlling warps"
-        : "BPM-clocked random warps";
-});
-
 resetButton.addEventListener("click", () => {
     allSliders.forEach((slider) => {
         slider.value = slider.dataset.default;
@@ -275,9 +255,7 @@ async function startAudio() {
     audioToggle.dataset.state = "playing";
     audioToggle.textContent = "Pause audio";
     audioToggle.classList.add("playing");
-    audioStatus.textContent = warpMode === "audio"
-        ? "Playing · bass + treble reactive"
-        : "Playing · BPM random mode";
+    audioStatus.textContent = "Playing · BPM-random warps";
     if (!automationFrame) automationFrame = requestAnimationFrame(automationLoop);
 }
 
@@ -295,15 +273,9 @@ function initializeAudioEngine() {
         await loadRNBOScript(patcher.desc.meta.rnboversion);
         rnboDevice = await window.RNBO.createDevice({ context: audioContext, patcher });
 
-        analyser = audioContext.createAnalyser();
-        analyser.fftSize = 2048;
-        analyser.smoothingTimeConstant = 0.72;
-        frequencyData = new Uint8Array(analyser.frequencyBinCount);
-
         const outputGain = audioContext.createGain();
         outputGain.gain.value = 0.9;
-        rnboDevice.node.connect(analyser);
-        analyser.connect(outputGain);
+        rnboDevice.node.connect(outputGain);
         outputGain.connect(audioContext.destination);
 
         const dependencyResponse = await fetch("export/dependencies.json");
@@ -373,29 +345,14 @@ function regenerateMappings() {
 
         return {
             name,
-            band: Math.random() < 0.5 ? "bass" : "treble",
-            crossMix: randomBetween(0, 0.24),
             lower: base,
             upper,
-            invert: Math.random() < 0.18,
-            response: randomBetween(0.65, 2.15),
-            gain: randomBetween(2.1, 5.0),
             smoothing: randomBetween(prominent ? 0.055 : 0.035, prominent ? 0.18 : 0.11),
             division: [0.5, 1, 1, 2, 2, 4][Math.floor(Math.random() * 6)],
             current: index % 5 === 0 ? base : 0,
             target: base,
             lastStep: -1
         };
-    });
-
-    // Ensure the headline deformations are divided between low and high energy.
-    morphMappings.forEach((mapping) => {
-        if (["ChinLength", "NeckLength", "NeckWidth", "MouthOpen", "JawDrop"].includes(mapping.name)) {
-            mapping.band = "bass";
-        }
-        if (["NoseLength", "EyeSize", "EyeProjection", "DreadsLength", "DreadSpread"].includes(mapping.name)) {
-            mapping.band = "treble";
-        }
     });
 
     rebuildProceduralWorld();
@@ -407,35 +364,10 @@ function automationLoop(timestamp) {
         return;
     }
 
-    if (warpMode === "audio") {
-        updateAudioreactiveMorphs();
-    } else {
-        updateRandomMorphs(timestamp);
-    }
+    updateRandomMorphs(timestamp);
     updateProceduralVisuals(timestamp);
     render();
     automationFrame = requestAnimationFrame(automationLoop);
-}
-
-function updateAudioreactiveMorphs() {
-    analyser.getByteFrequencyData(frequencyData);
-    const bassRaw = averageFrequencyRange(35, 190) / 255;
-    const trebleRaw = averageFrequencyRange(2200, 10500) / 255;
-    bassEnvelope = followEnvelope(bassEnvelope, bassRaw, 0.46, 0.12);
-    trebleEnvelope = followEnvelope(trebleEnvelope, trebleRaw, 0.55, 0.15);
-    visualBassTarget = clamp01(bassEnvelope * 4.2);
-    visualTrebleTarget = clamp01(trebleEnvelope * 5.4);
-
-    morphMappings.forEach((mapping) => {
-        const primary = mapping.band === "bass" ? bassEnvelope : trebleEnvelope;
-        const secondary = mapping.band === "bass" ? trebleEnvelope : bassEnvelope;
-        let energy = primary * (1 - mapping.crossMix) + secondary * mapping.crossMix;
-        energy = Math.pow(clamp01(energy * mapping.gain), mapping.response);
-        if (mapping.invert) energy = 1 - energy;
-        mapping.target = mapping.lower + (mapping.upper - mapping.lower) * energy;
-        mapping.current += (mapping.target - mapping.current) * mapping.smoothing;
-        setMorph(mapping.name, mapping.current);
-    });
 }
 
 function updateRandomMorphs(timestamp) {
@@ -636,26 +568,8 @@ function disposeObject(object) {
     });
 }
 
-function averageFrequencyRange(lowFrequency, highFrequency) {
-    const binSize = audioContext.sampleRate / analyser.fftSize;
-    const start = Math.max(0, Math.floor(lowFrequency / binSize));
-    const end = Math.min(frequencyData.length - 1, Math.ceil(highFrequency / binSize));
-    let total = 0;
-    for (let index = start; index <= end; index++) total += frequencyData[index];
-    return total / Math.max(1, end - start + 1);
-}
-
-function followEnvelope(current, input, attack, release) {
-    const coefficient = input > current ? attack : release;
-    return current + (input - current) * coefficient;
-}
-
 function randomBetween(minimum, maximum) {
     return minimum + Math.random() * (maximum - minimum);
-}
-
-function clamp01(value) {
-    return Math.max(0, Math.min(1, value));
 }
 
 function centreAndFrame(object) {

@@ -139,8 +139,7 @@ h1 {
 
 .audio-controls output { color: var(--acid); }
 
-#audio-toggle.playing,
-#warp-mode[data-mode="random"] {
+#audio-toggle.playing {
     border-color: var(--acid);
     color: #111;
     background: var(--acid);
