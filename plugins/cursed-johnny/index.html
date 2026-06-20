@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#12051d">
+    <meta name="rnbo-version" content="1.0.0-alpha.5">
+    <link rel="stylesheet" href="style/style.css">
+    <title>Cursed Johnny</title>
+</head>
+
+<body>
+    <noscript>You need to enable JavaScript to view Cursed Johnny.</noscript>
+    <script>
+        if (location.protocol === "file:") {
+            addEventListener("DOMContentLoaded", () => {
+                const message = document.getElementById("loading-message");
+                if (message) {
+                    message.innerHTML = "Johnny needs a local web server.<br>Double-click <strong>START CURSED JOHNNY.command</strong> instead of index.html.";
+                    message.classList.add("server-warning");
+                }
+            });
+        }
+    </script>
+
+    <main id="viewer-shell">
+        <header class="title-block">
+            <p class="eyebrow">RNBO CREATIONS / SUBJECT 001</p>
+            <h1>Cursed Johnny</h1>
+        </header>
+
+        <section id="head-stage" aria-label="Interactive 3D model of Johnny's head">
+            <div id="loading-message" role="status">Summoning Johnny…</div>
+        </section>
+
+        <aside class="control-panel" aria-label="Model controls">
+            <div class="audio-controls" aria-label="Audio controls">
+                <div class="audio-button-row">
+                    <button id="audio-toggle" type="button">Start audio</button>
+                    <button id="randomize-all" type="button">Randomize All</button>
+                </div>
+                <label for="bpm-control"><span>BPM</span><output id="bpm-output" for="bpm-control">120</output></label>
+                <input id="bpm-control" type="range" min="20" max="240" value="120" step="1">
+                <button id="warp-mode" type="button" data-mode="audio" aria-pressed="false">Mode: Audioreactive</button>
+                <p id="audio-status" role="status">Audio ready to load</p>
+            </div>
+
+            <div class="texture-control">
+                <label for="texture-select">Head texture</label>
+                <div class="select-wrap">
+                    <select id="texture-select">
+                        <option value="diffuse">Diffuse / colour</option>
+                        <option value="normal">Normal map</option>
+                        <option value="ao">Ambient occlusion</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="warp-ui">
+                <div class="control-tabs" role="tablist" aria-label="Warp control groups">
+                    <button class="tab-button active" role="tab" aria-selected="true" data-tab="face">Face</button>
+                    <button class="tab-button" role="tab" aria-selected="false" data-tab="mouth">Mouth</button>
+                    <button class="tab-button" role="tab" aria-selected="false" data-tab="body">Body</button>
+                    <button class="tab-button" role="tab" aria-selected="false" data-tab="dreads">Dreads</button>
+                </div>
+
+                <div class="morph-controls active" role="tabpanel" data-panel="face">
+                    <label for="nose-slider"><span>Nose length</span><output>0%</output></label><input id="nose-slider" data-morph="NoseLength" type="range" min="0" max="4.5" value="0" step="0.01">
+                    <label for="nose-straight-slider"><span>Nose straightening</span><output>0%</output></label><input id="nose-straight-slider" data-morph="NoseStraight" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="eyes-slider"><span>Eye size</span><output>0%</output></label><input id="eyes-slider" data-morph="EyeSize" type="range" min="0" max="5" value="0" step="0.01">
+                    <label for="eye-spacing-slider"><span>Eye spacing</span><output>0%</output></label><input id="eye-spacing-slider" data-morph="EyeSpacing" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="eye-projection-slider"><span>Eye projection</span><output>0%</output></label><input id="eye-projection-slider" data-morph="EyeProjection" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="brow-slider"><span>Brow height</span><output>0%</output></label><input id="brow-slider" data-morph="BrowHeight" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="chin-slider"><span>Chin length</span><output>0%</output></label><input id="chin-slider" data-morph="ChinLength" type="range" min="0" max="1.5" value="0" step="0.01">
+                    <label for="ear-size-slider"><span>Ear size</span><output>0%</output></label><input id="ear-size-slider" data-morph="EarSize" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="ear-angle-slider"><span>Ear wing angle</span><output>0%</output></label><input id="ear-angle-slider" data-morph="EarAngle" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="forehead-slider"><span>Forehead height</span><output>0%</output></label><input id="forehead-slider" data-morph="ForeheadHeight" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="skull-width-slider"><span>Skull width</span><output>0%</output></label><input id="skull-width-slider" data-morph="SkullWidth" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="skull-height-slider"><span>Skull height</span><output>0%</output></label><input id="skull-height-slider" data-morph="SkullHeight" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="cheek-slider"><span>Cheek inflation</span><output>0%</output></label><input id="cheek-slider" data-morph="CheekSize" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="jaw-width-slider"><span>Jaw width</span><output>0%</output></label><input id="jaw-width-slider" data-morph="JawWidth" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="face-twist-slider"><span>Face twist</span><output>0%</output></label><input id="face-twist-slider" data-morph="FaceTwist" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="melt-slider"><span>Face melt</span><output>0%</output></label><input id="melt-slider" data-morph="FaceMelt" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="inflate-slider"><span>Head inflation</span><output>0%</output></label><input id="inflate-slider" data-morph="HeadInflate" type="range" min="0" max="2" value="0" step="0.01">
+                </div>
+
+                <div class="morph-controls" role="tabpanel" data-panel="mouth" hidden>
+                    <label for="mouth-open-slider"><span>Mouth opening</span><output>0%</output></label><input id="mouth-open-slider" data-morph="MouthOpen" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="mouth-width-slider"><span>Mouth size</span><output>0%</output></label><input id="mouth-width-slider" data-morph="MouthWidth" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="smile-slider"><span>Smile</span><output>0%</output></label><input id="smile-slider" data-morph="Smile" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="frown-slider"><span>Frown</span><output>0%</output></label><input id="frown-slider" data-morph="Frown" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="jaw-drop-slider"><span>Jaw drop</span><output>0%</output></label><input id="jaw-drop-slider" data-morph="JawDrop" type="range" min="0" max="2" value="0" step="0.01">
+                </div>
+
+                <div class="morph-controls" role="tabpanel" data-panel="body" hidden>
+                    <label for="neck-length-slider"><span>Neck length</span><output>0%</output></label><input id="neck-length-slider" data-morph="NeckLength" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="neck-width-slider"><span>Neck thickness</span><output>0%</output></label><input id="neck-width-slider" data-morph="NeckWidth" type="range" min="0" max="2" value="0" step="0.01">
+                    <label for="shoulder-slider"><span>Shoulder width</span><output>0%</output></label><input id="shoulder-slider" data-morph="ShoulderWidth" type="range" min="0" max="2" value="0" step="0.01">
+                </div>
+
+                <div class="morph-controls" role="tabpanel" data-panel="dreads" hidden>
+                    <label for="dreads-slider"><span>Dread length</span><output>0%</output></label><input id="dreads-slider" data-morph="DreadsLength" type="range" min="0" max="7.5" value="0" step="0.01">
+                    <label for="dread-spread-slider"><span>Dread spread</span><output>0%</output></label><input id="dread-spread-slider" data-morph="DreadSpread" type="range" min="0" max="3" value="0" step="0.01">
+                    <label for="dread-twist-slider"><span>Dread twist</span><output>0%</output></label><input id="dread-twist-slider" data-morph="DreadTwist" type="range" min="0" max="3" value="0" step="0.01">
+                    <label for="dread-gravity-slider"><span>Dread gravity</span><output>0%</output></label><input id="dread-gravity-slider" data-morph="DreadGravity" type="range" min="0" max="3" value="0" step="0.01">
+                </div>
+            </div>
+            <button id="reset-view" type="button">Reset all</button>
+        </aside>
+
+        <p class="instructions"><span>Drag</span> to rotate · <span>Scroll or pinch</span> to zoom</p>
+    </main>
+
+    <script type="importmap">
+        {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}
+    </script>
+    <script type="module" src="js/head-viewer.js"></script>
+
+</body>
+</html>

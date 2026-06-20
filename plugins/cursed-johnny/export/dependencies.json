@@ -1,0 +1,34 @@
+[
+  {
+    "id": "beat1",
+    "file": "media/beat1.mp3"
+  },
+  {
+    "id": "beat2",
+    "file": "media/beat2.mp3"
+  },
+  {
+    "id": "beat3",
+    "file": "media/beat3.mp3"
+  },
+  {
+    "id": "beat4",
+    "file": "media/beat4.mp3"
+  },
+  {
+    "id": "beat5",
+    "file": "media/beat5.mp3"
+  },
+  {
+    "id": "beat6",
+    "file": "media/beat6.mp3"
+  },
+  {
+    "id": "beat7",
+    "file": "media/beat7.mp3"
+  },
+  {
+    "id": "beat8",
+    "file": "media/beat8.mp3"
+  }
+]
