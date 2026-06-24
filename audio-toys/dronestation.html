@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#000000">
+    <title>DroneStation | Calcium Audio</title>
+    <link rel="stylesheet" href="../style/site.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="site-mark" href="../index.html">Calcium Audio</a>
+        <nav class="category-nav" aria-label="Project categories">
+            <a href="../unity-audio/index.html">Unity Audio</a>
+            <a href="../audio-games/index.html">Audio Games</a>
+            <a href="../audio-toys/index.html" aria-current="page">Audio Toys</a>
+            <a href="../plugin-shootout/index.html">Plugin Shootout</a>
+            <a href="../vst-plugins/index.html">VST Plugins</a>
+            <a href="../music/index.html">Music</a>
+        </nav>
+    </header>
+
+    <main class="project-page has-site-header">
+        <a class="back-link" href="index.html">Back to Audio Toys</a>
+        <header class="project-hero">
+            <p class="eyebrow">Audio Toys</p>
+            <h1>DroneStation</h1>
+            <p>A web-based drone sound design explorer for algorithmic textures, delay networks, reverb spaces, and distortion.</p>
+            <div class="project-actions">
+                <a class="home-action" href="../plugins/dronestation/index.html">Launch DroneStation</a>
+            </div>
+        </header>
+
+        <section class="project-body" aria-label="DroneStation description">
+            <article class="project-copy">
+                <h2>Description</h2>
+                <p>Dronestation was my first RNBO-to-web project: an interactive browser-based sound instrument designed for exploring algorithmically generated drone textures, delay networks, reverb spaces, and distortion without relying on a traditional knob-driven interface.</p>
+                <p>The sound engine was built in GenExpr within RNBO, using five layered synthesiser voices routed through a shared procedural effects chain. The system generates rich, evolving drone states that continuously shift in texture, density, and harmonic character.</p>
+                <p>Rather than exposing a static interface, Dronestation is controlled entirely through movement. Mouse position maps directly onto the instrument&apos;s internal behaviour: the X-axis influences pitch behaviour, stereo width, delay mix, and generative motion, while the Y-axis controls brightness, reverb space, and damping. Clicking and dragging pushes the system into more unstable states, increasing density, drive, feedback, and temporal complexity.</p>
+                <p>This creates an instrument that remains active and responsive even when left untouched, blurring the line between performance and autonomous generative system.</p>
+                <p>These same audio parameters are mirrored into a procedural visual environment built using React, HTML Canvas, and WebGL. Delay, reverb, distortion, density, brightness, and pointer position all shape an abstract field of reactive geometry, pulsing forms, echo trails, and shifting spatial depth.</p>
+                <p>The visual language draws heavily from my previous Jitter work, reimagined for the browser as a unified audiovisual instrument.</p>
+            </article>
+            <aside class="project-stack" aria-label="Project stack">
+                <h2>Stack</h2>
+                <ul class="stack-list">
+                    <li>Max/MSP</li>
+                    <li>RNBO</li>
+                    <li>Gen~ / GenExpr</li>
+                    <li>JavaScript</li>
+                    <li>React</li>
+                    <li>HTML Canvas</li>
+                    <li>WebGL</li>
+                </ul>
+            </aside>
+        </section>
+    </main>
+</body>
+</html>

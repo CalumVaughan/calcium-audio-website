@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#000000">
+    <title>Minescreamer | Calcium Audio</title>
+    <link rel="stylesheet" href="../style/site.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="site-mark" href="../index.html">Calcium Audio</a>
+        <nav class="category-nav" aria-label="Project categories">
+            <a href="../unity-audio/index.html">Unity Audio</a>
+            <a href="../audio-games/index.html" aria-current="page">Audio Games</a>
+            <a href="../audio-toys/index.html">Audio Toys</a>
+            <a href="../plugin-shootout/index.html">Plugin Shootout</a>
+            <a href="../vst-plugins/index.html">VST Plugins</a>
+            <a href="../music/index.html">Music</a>
+        </nav>
+    </header>
+
+    <main class="project-page has-site-header">
+        <a class="back-link" href="index.html">Back to Audio Games</a>
+        <header class="project-hero">
+            <p class="eyebrow">Audio Games</p>
+            <h1>Minescreamer</h1>
+            <p>An audio-first reimagining of Minesweeper where generative patterns replace visual clue numbers.</p>
+            <div class="project-actions">
+                <a class="home-action" href="../plugins/minescreamer/index.html">Play Minescreamer</a>
+            </div>
+        </header>
+
+        <section class="project-body" aria-label="Minescreamer description">
+            <article class="project-copy">
+                <h2>Description</h2>
+                <p>Minescreamer is an audio-first reimagining of the classic puzzle game Minesweeper. Instead of relying on visual clue numbers, players identify bomb locations by listening to generative audio patterns.</p>
+                <p>As one of my first RNBO-to-JavaScript web experiments, the audio architecture was intentionally built as a direct procedural system. Eight distinct generative clue signals were designed in GenExpr within RNBO, each corresponding to the number of adjacent bombs on a revealed tile.</p>
+                <p>A tile with one adjacent bomb emits a single soft pulse; a tile surrounded by all eight possible bombs unleashes an aggressive, noisy eight-pulse burst. This transforms traditional Minesweeper deduction into a process of active listening and pattern recognition.</p>
+                <p>The game includes Easy, Medium, and Hard difficulty modes, with higher difficulties requiring more advanced deduction strategies such as subset logic and overlapping constraint analysis.</p>
+                <p>Minescreamer was also my first project to implement online persistence, featuring a global high-score board and a Wall of Shame for detonations, powered by Supabase.</p>
+            </article>
+            <aside class="project-stack" aria-label="Project stack">
+                <h2>Stack</h2>
+                <ul class="stack-list">
+                    <li>Max/MSP</li>
+                    <li>RNBO</li>
+                    <li>Gen~</li>
+                    <li>p5.js</li>
+                    <li>JavaScript</li>
+                    <li>Supabase</li>
+                </ul>
+            </aside>
+        </section>
+    </main>
+</body>
+</html>
