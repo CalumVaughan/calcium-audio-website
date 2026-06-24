@@ -8,27 +8,49 @@
     <link rel="stylesheet" href="../style/site.css">
 </head>
 <body>
-    <main class="project-page">
+    <header class="site-header">
+        <a class="site-mark" href="../index.html">Calcium Audio</a>
+        <nav class="category-nav" aria-label="Project categories">
+            <a href="../unity-audio/index.html" aria-current="page">Unity Audio</a>
+            <a href="../audio-games/index.html">Audio Games</a>
+            <a href="../audio-toys/index.html">Audio Toys</a>
+            <a href="../plugin-shootout/index.html">Plugin Shootout</a>
+            <a href="../vst-plugins/index.html">VST Plugins</a>
+            <a href="../music/index.html">Music</a>
+        </nav>
+    </header>
+
+    <main class="project-page has-site-header">
         <a class="back-link" href="index.html">Back to Unity Audio</a>
         <header class="project-hero">
             <p class="eyebrow">Unity Audio</p>
             <h1>Musical Village</h1>
-            <p>A template page for the build, audio design notes, media, and devlog.</p>
+            <p>RNBO, ChucK, and sonic overstimulation inside a small Unity world built around combat, live coding, and audio-reactive play.</p>
         </header>
 
-        <section class="project-detail-grid" aria-label="Project details">
-            <article>
-                <span class="project-type">Overview</span>
-                <p>Describe the village systems, musical interactions, and the main listening or play experience.</p>
+        <section class="project-body" aria-label="Musical Village description">
+            <article class="project-copy">
+                <h2>Description</h2>
+                <p>Musical Village was one of my first serious experiments in bringing RNBO audio packages into Unity in a way that felt like an actual game rather than a technical demo. The project combined three core systems: a 2D bullet-hell boss battle, an in-game live-coding environment for ChucK, and an audio-reactive disco where players could hear and visualize their own code in real time.</p>
+                <p>The project began as an attempt to push my earlier RNBO-to-Unity experiments beyond sparse prototypes. I built a bullet-hell encounter in which the player, an adventurous cat, fights a giant geometric flying boss. Almost every combat interaction had its own procedural sound layer: the player&apos;s shots, successful hits, the boss&apos;s three bullet types, and player damage all triggered separate algorithmic sound effects built in genexpr~ and exported via RNBO. The aim was to make sound feel structural rather than decorative, with the audio density matching the intensity of the gameplay.</p>
+                <p>Layered over the battle was AmenAngel, an RNBO break-mashing package based on a patch developed by myself and other Max patchers. As the player progressed through boss levels, the Amen processing increased in speed and intensity, gradually turning the soundtrack into a rapid, abrasive wall of rhythm. This escalation was central to the experiment: I wanted the bullet-hell format to feel not just visually overwhelming, but sonically overwhelming too.</p>
+                <p>Once the combat system was in place, I expanded the project into a small explorable village that became a container for further audio ideas. The most significant addition was a house containing an in-game ChucK computer: a functional live-coding environment where players could write, run, edit, save, and reload ChucK patches from within the world itself. That system turned the game into a space for user-authored sound, not just authored content.</p>
+                <p>I later extended this idea with an audio-reactive disco. In this space, players could load one of their saved ChucK patches and watch the environment generate visuals in response to the musical behavior of the code. Rather than a fixed visualizer, it acted more like a playable stage for live-coded composition.</p>
+                <p>I&apos;ve since left the project behind, but it served its purpose: it proved out a workflow for combining RNBO packages, procedural game audio, and live coding inside Unity. If I return to it, I&apos;d want to push the bullet-hell side much further. Vampire Survivors was a clear influence, but the longer-term goal is slightly different: a game that overwhelms the player sonically as much as visually.</p>
             </article>
-            <article>
-                <span class="project-type">Media</span>
-                <p>Add screenshots, video embeds, playable builds, or short audio examples here.</p>
-            </article>
-            <article>
-                <span class="project-type">Devlog</span>
-                <p>Keep project updates on this page so the category stays tidy while the work compounds.</p>
-            </article>
+            <aside class="project-stack" aria-label="Project stack">
+                <h2>Stack</h2>
+                <ul class="stack-list">
+                    <li>Unity 6</li>
+                    <li>C#</li>
+                    <li>ChucK via Chunity</li>
+                    <li>RNBO</li>
+                    <li>Max/MSP</li>
+                    <li>gen~ / genexpr~</li>
+                    <li>Unity URP 2D</li>
+                    <li>Unity Input System</li>
+                </ul>
+            </aside>
         </section>
     </main>
 </body>
