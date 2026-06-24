@@ -53,11 +53,11 @@ a {
 }
 
 .intro {
-    min-height: min(760px, 86vh);
-    max-width: 980px;
+    min-height: min(640px, 78vh);
+    max-width: 860px;
     display: grid;
     align-content: end;
-    padding-bottom: clamp(42px, 8vw, 92px);
+    padding-bottom: clamp(28px, 6vw, 64px);
 }
 
 .eyebrow {
@@ -70,8 +70,8 @@ a {
 
 h1 {
     margin: 0;
-    font-size: clamp(48px, 10vw, 128px);
-    line-height: 0.9;
+    font-size: clamp(34px, 5.8vw, 64px);
+    line-height: 0.98;
     font-weight: 780;
     letter-spacing: 0;
 }
@@ -150,8 +150,8 @@ h1 {
 
 h2 {
     margin: 0;
-    font-size: clamp(34px, 5vw, 78px);
-    line-height: 0.92;
+    font-size: clamp(24px, 3.2vw, 42px);
+    line-height: 1;
     letter-spacing: 0;
 }
 
@@ -204,8 +204,8 @@ h2 {
 .project-card strong {
     display: block;
     margin-bottom: 16px;
-    font-size: clamp(24px, 3vw, 38px);
-    line-height: 0.96;
+    font-size: clamp(20px, 2vw, 26px);
+    line-height: 1;
     letter-spacing: 0;
 }
 
@@ -215,8 +215,8 @@ h2 {
     margin: 0;
     max-width: 62ch;
     color: rgba(246, 248, 245, 0.68);
-    font-size: 15px;
-    line-height: 1.55;
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 .project-page {
@@ -229,7 +229,7 @@ h2 {
 }
 
 .project-page.has-site-header {
-    padding-top: clamp(116px, 12vw, 160px);
+    padding-top: clamp(96px, 9vw, 120px);
 }
 
 .category-page {
@@ -244,20 +244,20 @@ h2 {
 
 .category-hero {
     max-width: 940px;
-    padding-bottom: clamp(42px, 8vw, 92px);
+    padding-bottom: clamp(32px, 6vw, 68px);
 }
 
 .category-hero p {
-    margin: 28px 0 0;
+    margin: 18px 0 0;
     max-width: 62ch;
     color: rgba(246, 248, 245, 0.68);
-    font-size: clamp(18px, 2vw, 24px);
-    line-height: 1.45;
+    font-size: clamp(14px, 1.5vw, 17px);
+    line-height: 1.5;
 }
 
 .project-hero {
     max-width: 1060px;
-    padding: clamp(70px, 12vw, 150px) 0 clamp(42px, 8vw, 90px);
+    padding: clamp(18px, 4vw, 40px) 0 clamp(28px, 5vw, 56px);
 }
 
 .project-hero h1 {
@@ -265,8 +265,9 @@ h2 {
 }
 
 .project-hero p {
-    margin-top: 28px;
-    font-size: clamp(18px, 2vw, 24px);
+    margin-top: 18px;
+    font-size: clamp(14px, 1.5vw, 17px);
+    line-height: 1.5;
 }
 
 .project-actions {
@@ -279,9 +280,9 @@ h2 {
 .project-body {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
-    gap: clamp(28px, 6vw, 80px);
+    gap: clamp(24px, 5vw, 64px);
     border-top: 1px solid rgba(246, 248, 245, 0.14);
-    padding-top: clamp(32px, 6vw, 70px);
+    padding-top: clamp(26px, 5vw, 56px);
 }
 
 .project-copy {
@@ -290,15 +291,15 @@ h2 {
 
 .project-copy h2,
 .project-stack h2 {
-    margin: 0 0 22px;
-    font-size: clamp(28px, 4vw, 52px);
+    margin: 0 0 16px;
+    font-size: clamp(22px, 2.6vw, 32px);
 }
 
 .project-copy p {
-    margin: 0 0 22px;
+    margin: 0 0 16px;
     color: rgba(246, 248, 245, 0.74);
-    font-size: 17px;
-    line-height: 1.68;
+    font-size: 14px;
+    line-height: 1.58;
 }
 
 .project-stack {
@@ -331,10 +332,11 @@ h2 {
 }
 
 .feature-list li {
-    padding: 12px 0;
+    padding: 10px 0;
     border-top: 1px solid rgba(246, 248, 245, 0.12);
     color: rgba(246, 248, 245, 0.72);
-    line-height: 1.5;
+    font-size: 13px;
+    line-height: 1.45;
 }
 
 .feature-list li:first-child {
