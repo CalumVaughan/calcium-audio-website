@@ -18,9 +18,33 @@ a {
     color: inherit;
 }
 
+.site-header {
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 14px clamp(24px, 6vw, 72px);
+    border-bottom: 1px solid rgba(246, 248, 245, 0.12);
+    background: rgba(0, 0, 0, 0.74);
+    backdrop-filter: blur(18px);
+}
+
+.site-mark {
+    flex: 0 0 auto;
+    color: rgba(246, 248, 245, 0.82);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
 .home {
     min-height: 100vh;
-    padding: clamp(24px, 6vw, 72px);
+    padding: clamp(86px, 10vw, 128px) clamp(24px, 6vw, 72px) clamp(24px, 6vw, 72px);
     background:
         linear-gradient(180deg, transparent 0, #000 720px),
         radial-gradient(circle at 74% 12%, rgba(82, 182, 255, 0.18), transparent 30%),
@@ -53,10 +77,16 @@ h1 {
 }
 
 .category-nav {
+    min-width: 0;
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 34px;
+    flex: 1 1 auto;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.category-nav::-webkit-scrollbar {
+    display: none;
 }
 
 .category-nav a,
@@ -67,6 +97,7 @@ h1 {
     padding: 0 18px;
     border: 1px solid rgba(246, 248, 245, 0.22);
     color: rgba(246, 248, 245, 0.92);
+    white-space: nowrap;
     text-decoration: none;
     text-transform: uppercase;
     font-size: 12px;
@@ -90,7 +121,7 @@ h1 {
 
 .category-heading {
     position: sticky;
-    top: 24px;
+    top: 92px;
     align-self: start;
 }
 
@@ -201,9 +232,19 @@ h2 {
 }
 
 @media (max-width: 760px) {
+    .site-header {
+        display: block;
+        padding: 12px 22px;
+    }
+
+    .site-mark {
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+
     .home,
     .project-page {
-        padding: 22px;
+        padding: 104px 22px 22px;
     }
 
     .intro {
@@ -221,7 +262,15 @@ h2 {
 
     .category-nav a,
     .back-link {
-        width: 100%;
         justify-content: start;
+    }
+
+    .category-nav a {
+        min-height: 38px;
+        padding: 0 14px;
+    }
+
+    .back-link {
+        width: 100%;
     }
 }
