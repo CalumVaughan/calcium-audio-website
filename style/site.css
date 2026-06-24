@@ -106,9 +106,32 @@ h1 {
 }
 
 .category-nav a:hover,
+.category-nav a[aria-current="page"],
 .back-link:hover,
+.home-action:hover,
 .project-card:hover {
     border-color: rgba(246, 248, 245, 0.68);
+}
+
+.home-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 34px;
+}
+
+.home-action {
+    display: inline-grid;
+    place-items: center;
+    min-height: 46px;
+    padding: 0 18px;
+    border: 1px solid rgba(246, 248, 245, 0.22);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(246, 248, 245, 0.92);
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.12em;
 }
 
 .category-section {
@@ -205,6 +228,29 @@ h2 {
         #000;
 }
 
+.category-page {
+    min-height: 100vh;
+    padding: clamp(116px, 12vw, 160px) clamp(24px, 6vw, 72px) clamp(42px, 8vw, 92px);
+    background:
+        linear-gradient(180deg, transparent 0, #000 640px),
+        radial-gradient(circle at 78% 16%, rgba(82, 182, 255, 0.16), transparent 30%),
+        radial-gradient(circle at 18% 58%, rgba(246, 82, 127, 0.12), transparent 30%),
+        #000;
+}
+
+.category-hero {
+    max-width: 940px;
+    padding-bottom: clamp(42px, 8vw, 92px);
+}
+
+.category-hero p {
+    margin: 28px 0 0;
+    max-width: 62ch;
+    color: rgba(246, 248, 245, 0.68);
+    font-size: clamp(18px, 2vw, 24px);
+    line-height: 1.45;
+}
+
 .project-hero {
     max-width: 1060px;
     padding: clamp(70px, 12vw, 150px) 0 clamp(42px, 8vw, 90px);
@@ -270,7 +316,16 @@ h2 {
         padding: 0 14px;
     }
 
+    .home-action {
+        width: 100%;
+        justify-content: start;
+    }
+
     .back-link {
         width: 100%;
+    }
+
+    .category-page {
+        padding: 124px 22px 42px;
     }
 }
