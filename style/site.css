@@ -116,52 +116,30 @@ h1 {
 .category-nav a:hover,
 .category-nav a[aria-current="page"],
 .back-link:hover,
-.home-action:hover,
 .project-card:hover {
     border-color: rgba(246, 248, 245, 0.68);
 }
 
-.home-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 28px;
-}
-
-.home-action {
-    display: inline-grid;
-    place-items: center;
-    min-height: 46px;
-    padding: 0 18px;
-    border: 1px solid rgba(246, 248, 245, 0.22);
-    background: rgba(255, 255, 255, 0.04);
-    color: rgba(246, 248, 245, 0.92);
-    text-decoration: none;
-    text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 0.12em;
-}
-
 .home-signal-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
     max-width: 1120px;
-    margin: clamp(34px, 6vw, 64px) 0 0;
+    margin: clamp(30px, 5vw, 54px) 0 0;
     padding: 0;
 }
 
 .home-signal-grid div {
-    min-height: 150px;
-    padding: 18px;
+    min-height: 164px;
+    padding: 16px;
     border: 1px solid rgba(246, 248, 245, 0.14);
     background: rgba(255, 255, 255, 0.035);
 }
 
 .home-signal-grid dt {
-    margin: 0 0 20px;
+    margin: 0 0 18px;
     color: rgba(246, 248, 245, 0.9);
-    font-size: 13px;
+    font-size: 12px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
 }
@@ -169,7 +147,7 @@ h1 {
 .home-signal-grid dd {
     margin: 0;
     color: rgba(246, 248, 245, 0.64);
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.5;
 }
 
@@ -434,11 +412,6 @@ h2 {
     .category-nav a {
         min-height: 38px;
         padding: 0 14px;
-    }
-
-    .home-action {
-        width: 100%;
-        justify-content: start;
     }
 
     .home-signal-grid {
