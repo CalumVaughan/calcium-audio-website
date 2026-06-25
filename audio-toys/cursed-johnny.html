@@ -54,6 +54,68 @@
                 </ul>
             </aside>
         </section>
+
+        <section class="project-media-section" aria-labelledby="cursed-johnny-screenshots">
+            <h2 id="cursed-johnny-screenshots">Screenshots</h2>
+            <div class="project-media-grid" aria-label="Cursed Johnny screenshots">
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/cursed-johnny-01.png" aria-label="Open Cursed Johnny screenshot 1 full size">
+                        <img src="img/cursed-johnny-01.png" width="3024" height="1898" alt="Cursed Johnny interface with a 3D scanned head, reactive wireframe forms, and randomization controls.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/cursed-johnny-02.png" aria-label="Open Cursed Johnny screenshot 2 full size">
+                        <img src="img/cursed-johnny-02.png" width="3024" height="1898" alt="Cursed Johnny showing a distorted 3D head against a red generative visual field.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/cursed-johnny-03.png" aria-label="Open Cursed Johnny screenshot 3 full size">
+                        <img src="img/cursed-johnny-03.png" width="3024" height="1898" alt="Cursed Johnny close view of a mutated head with BPM and head texture controls.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+            </div>
+        </section>
+
+        <dialog class="image-viewer" aria-label="Expanded Cursed Johnny screenshot">
+            <button class="image-viewer-close" type="button">Close</button>
+            <img src="" alt="">
+        </dialog>
     </main>
+    <script>
+        const imageViewer = document.querySelector(".image-viewer");
+        const imageViewerImage = imageViewer.querySelector("img");
+        const imageViewerClose = imageViewer.querySelector(".image-viewer-close");
+
+        document.querySelectorAll(".project-media-link").forEach((button) => {
+            button.addEventListener("click", () => {
+                const thumbnail = button.querySelector("img");
+                imageViewerImage.src = button.dataset.full;
+                imageViewerImage.alt = thumbnail.alt;
+                imageViewer.showModal();
+            });
+        });
+
+        const closeImageViewer = () => {
+            imageViewerImage.removeAttribute("src");
+            imageViewerImage.alt = "";
+            imageViewer.close();
+        };
+
+        imageViewerClose.addEventListener("click", closeImageViewer);
+
+        imageViewer.addEventListener("click", (event) => {
+            if (event.target === imageViewer) {
+                closeImageViewer();
+            }
+        });
+
+        imageViewer.addEventListener("close", () => {
+            imageViewerImage.removeAttribute("src");
+            imageViewerImage.alt = "";
+        });
+    </script>
 </body>
 </html>
