@@ -340,20 +340,40 @@ h2 {
     object-fit: cover;
 }
 
-.project-media-link span {
+.maximize-icon {
     position: absolute;
     right: 10px;
     bottom: 10px;
-    padding: 8px 10px;
+    display: block;
+    width: 34px;
+    height: 34px;
     border: 1px solid rgba(246, 248, 245, 0.24);
     background: rgba(0, 0, 0, 0.62);
-    color: rgba(246, 248, 245, 0.86);
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
 }
 
-.project-media-link:hover span {
+.maximize-icon::before,
+.maximize-icon::after {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    content: "";
+}
+
+.maximize-icon::before {
+    top: 9px;
+    left: 9px;
+    border-top: 2px solid rgba(246, 248, 245, 0.86);
+    border-left: 2px solid rgba(246, 248, 245, 0.86);
+}
+
+.maximize-icon::after {
+    right: 9px;
+    bottom: 9px;
+    border-right: 2px solid rgba(246, 248, 245, 0.86);
+    border-bottom: 2px solid rgba(246, 248, 245, 0.86);
+}
+
+.project-media-link:hover .maximize-icon {
     border-color: rgba(246, 248, 245, 0.68);
 }
 
