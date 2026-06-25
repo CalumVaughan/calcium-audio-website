@@ -22,49 +22,18 @@
 
     <main class="project-page has-site-header">
         <a class="back-link" href="index.html">Back to Audio Toys</a>
-        <header class="project-hero">
-            <p class="eyebrow">Audio Toys</p>
-            <h1>Cursed Johnny</h1>
-            <p>An experimental audiovisual web piece where algorithmic remixing mutates a scanned 3D head in real time.</p>
-            <div class="project-actions">
-                <a class="home-action" href="../plugins/cursed-johnny/index.html">Summon Cursed Johnny</a>
-            </div>
-        </header>
 
-        <section class="project-body" aria-label="Cursed Johnny description">
-            <article class="project-copy">
-                <h2>Description</h2>
-                <p>Cursed Johnny is an experimental audiovisual web piece built from an ongoing series of algorithmic Max/MSP/Jitter collaborations with musician Johnny McJohnston.</p>
-                <p>Using a collection of 120 BPM source material provided by Johnny, I built a BPM-synchronised remix engine in RNBO designed to continuously re-sequence and mutate the incoming audio material in real time.</p>
-                <p>Alongside the audio, Johnny provided a 3D scan of his head, which I processed in Blender to isolate a set of deformable facial parameters, including nose length, mouth opening, and eye scale. These morph targets were then integrated into a browser-based WebGL environment using Three.js and directly mapped to the RNBO audio engine.</p>
-                <p>The result is Cursed Johnny: a reactive audiovisual entity whose facial structure continuously mutates in response to algorithmic audio transformations, blurring the boundary between musical remixing and character deformation.</p>
-                <p>This project continues my broader exploration into procedural audiovisual systems, where sound and form evolve as part of a shared generative process.</p>
-            </article>
-            <aside class="project-stack" aria-label="Project stack">
-                <h2>Stack</h2>
-                <ul class="stack-list">
-                    <li>Max/MSP</li>
-                    <li>RNBO</li>
-                    <li>gen~</li>
-                    <li>Jitter</li>
-                    <li>Blender</li>
-                    <li>WebGL</li>
-                    <li>Three.js</li>
-                    <li>JavaScript</li>
-                </ul>
-            </aside>
-        </section>
+        <section class="project-pane-hero" aria-label="Cursed Johnny overview">
+            <header class="project-pane-copy">
+                <p class="eyebrow">Audio Toys</p>
+                <h1>Cursed Johnny</h1>
+                <p>An experimental audiovisual web piece where algorithmic remixing mutates a scanned 3D head in real time.</p>
+                <div class="project-actions">
+                    <a class="home-action" href="../plugins/cursed-johnny/index.html">Summon Cursed Johnny</a>
+                </div>
+            </header>
 
-        <section class="project-video-section" aria-labelledby="cursed-johnny-video">
-            <h2 id="cursed-johnny-video">Video</h2>
-            <div class="video-embed">
-                <iframe src="https://www.youtube.com/embed/QwGJiOSsDyA" title="Cursed Johnny video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </div>
-        </section>
-
-        <section class="project-media-section" aria-labelledby="cursed-johnny-screenshots">
-            <h2 id="cursed-johnny-screenshots">Screenshots</h2>
-            <div class="project-media-grid" aria-label="Cursed Johnny screenshots">
+            <div class="project-pane-window" aria-label="Cursed Johnny screenshots">
                 <figure>
                     <button class="project-media-link" type="button" data-full="img/cursed-johnny-01.png" aria-label="Open Cursed Johnny screenshot 1 full size">
                         <img src="img/cursed-johnny-01.png" width="3024" height="1898" alt="Cursed Johnny interface with a 3D scanned head, reactive wireframe forms, and randomization controls.">
@@ -84,6 +53,38 @@
                     </button>
                 </figure>
             </div>
+        </section>
+
+        <section class="project-detail-with-video" aria-label="Cursed Johnny description">
+            <article class="project-copy project-detail-copy">
+                <h2>Description</h2>
+                <p>Cursed Johnny is an experimental audiovisual web piece built from an ongoing series of algorithmic Max/MSP/Jitter collaborations with musician Johnny McJohnston.</p>
+                <p>Using a collection of 120 BPM source material provided by Johnny, I built a BPM-synchronised remix engine in RNBO designed to continuously re-sequence and mutate the incoming audio material in real time.</p>
+                <p>Alongside the audio, Johnny provided a 3D scan of his head, which I processed in Blender to isolate a set of deformable facial parameters, including nose length, mouth opening, and eye scale. These morph targets were then integrated into a browser-based WebGL environment using Three.js and directly mapped to the RNBO audio engine.</p>
+                <p>The result is Cursed Johnny: a reactive audiovisual entity whose facial structure continuously mutates in response to algorithmic audio transformations, blurring the boundary between musical remixing and character deformation.</p>
+                <p>This project continues my broader exploration into procedural audiovisual systems, where sound and form evolve as part of a shared generative process.</p>
+            </article>
+
+            <aside class="project-detail-video" aria-labelledby="cursed-johnny-video">
+                <h2 id="cursed-johnny-video">Video</h2>
+                <div class="project-detail-video-frame video-embed">
+                    <iframe src="https://www.youtube.com/embed/QwGJiOSsDyA" title="Cursed Johnny video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </aside>
+        </section>
+
+        <section class="project-stack-bar" aria-label="Project stack">
+            <h2>Stack</h2>
+            <ul class="stack-list">
+                <li>Max/MSP</li>
+                <li>RNBO</li>
+                <li>gen~</li>
+                <li>Jitter</li>
+                <li>Blender</li>
+                <li>WebGL</li>
+                <li>Three.js</li>
+                <li>JavaScript</li>
+            </ul>
         </section>
 
         <dialog class="image-viewer" aria-label="Expanded Cursed Johnny screenshot">

@@ -22,45 +22,17 @@
 
     <main class="project-page has-site-header">
         <a class="back-link" href="index.html">Back to Audio Games</a>
-        <header class="project-hero">
-            <p class="eyebrow">Audio Games</p>
-            <h1>No Input Maze</h1>
-            <p>An experimental browser-based horror game built around an algorithmic no-input feedback system.</p>
-            <div class="project-actions">
-                <a class="home-action" href="../plugins/noinputmaze/index.html">Play No Input Maze</a>
-            </div>
-        </header>
+        <section class="project-pane-hero" aria-label="No Input Maze overview">
+            <header class="project-pane-copy">
+                <p class="eyebrow">Audio Games</p>
+                <h1>No Input Maze</h1>
+                <p>An experimental browser-based horror game built around an algorithmic no-input feedback system.</p>
+                <div class="project-actions">
+                    <a class="home-action" href="../plugins/noinputmaze/index.html">Play No Input Maze</a>
+                </div>
+            </header>
 
-        <section class="project-body" aria-label="No Input Maze description">
-            <article class="project-copy">
-                <h2>Description</h2>
-                <p>No Input Maze is an experimental browser-based horror game built around an algorithmic no-input feedback system. Players navigate a pseudo-3D wireframe maze while interacting with a generative sound engine that evolves in real time.</p>
-                <p>The project began as a no-input feedback prototype in Max/MSP before being ported into RNBO using gen~ and exported as Web JavaScript. This allowed the audio system to function as the game&apos;s central mechanic rather than as background accompaniment.</p>
-                <p>Built in p5.js, the maze uses a lightweight pseudo-3D renderer to create a retro, disorienting visual space. Jumpscares and environmental triggers dynamically alter synthesis parameters such as feedback, delay time, noise, and distortion, creating an unstable and increasingly hostile sonic environment.</p>
-                <p>This project is part of an ongoing exploration into audio-first game design, where procedural sound generation drives player tension, navigation, and atmosphere. Future development will expand both the web version and a Unity-based adaptation.</p>
-            </article>
-            <aside class="project-stack" aria-label="Project stack">
-                <h2>Stack</h2>
-                <ul class="stack-list">
-                    <li>Max/MSP</li>
-                    <li>RNBO</li>
-                    <li>gen~</li>
-                    <li>p5.js</li>
-                    <li>JavaScript</li>
-                </ul>
-            </aside>
-        </section>
-
-        <section class="project-video-section" aria-labelledby="no-input-maze-video">
-            <h2 id="no-input-maze-video">Video</h2>
-            <video controls preload="metadata" width="1920" height="1206">
-                <source src="media/no-input-maze-demo.mp4" type="video/mp4">
-            </video>
-        </section>
-
-        <section class="project-media-section" aria-labelledby="no-input-maze-screenshots">
-            <h2 id="no-input-maze-screenshots">Screenshots</h2>
-            <div class="project-media-grid" aria-label="No Input Maze screenshots">
+            <div class="project-pane-window" aria-label="No Input Maze screenshots">
                 <figure>
                     <button class="project-media-link" type="button" data-full="img/no-input-maze-01.png" aria-label="Open No Input Maze screenshot 1 full size">
                         <img src="img/no-input-maze-01.png" width="3024" height="1898" alt="No Input Maze wireframe corridor with signal counter and life meter visible.">
@@ -80,6 +52,36 @@
                     </button>
                 </figure>
             </div>
+        </section>
+
+        <section class="project-detail-with-video" aria-label="No Input Maze description">
+            <article class="project-copy project-detail-copy">
+                <h2>Description</h2>
+                <p>No Input Maze is an experimental browser-based horror game built around an algorithmic no-input feedback system. Players navigate a pseudo-3D wireframe maze while interacting with a generative sound engine that evolves in real time.</p>
+                <p>The project began as a no-input feedback prototype in Max/MSP before being ported into RNBO using gen~ and exported as Web JavaScript. This allowed the audio system to function as the game&apos;s central mechanic rather than as background accompaniment.</p>
+                <p>Built in p5.js, the maze uses a lightweight pseudo-3D renderer to create a retro, disorienting visual space. Jumpscares and environmental triggers dynamically alter synthesis parameters such as feedback, delay time, noise, and distortion, creating an unstable and increasingly hostile sonic environment.</p>
+                <p>This project is part of an ongoing exploration into audio-first game design, where procedural sound generation drives player tension, navigation, and atmosphere. Future development will expand both the web version and a Unity-based adaptation.</p>
+            </article>
+
+            <aside class="project-detail-video" aria-labelledby="no-input-maze-video">
+                <h2 id="no-input-maze-video">Video</h2>
+                <div class="project-detail-video-frame">
+                    <video controls preload="metadata">
+                        <source src="media/no-input-maze-demo.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </aside>
+        </section>
+
+        <section class="project-stack-bar" aria-label="Project stack">
+            <h2>Stack</h2>
+            <ul class="stack-list">
+                <li>Max/MSP</li>
+                <li>RNBO</li>
+                <li>gen~</li>
+                <li>p5.js</li>
+                <li>JavaScript</li>
+            </ul>
         </section>
 
         <dialog class="image-viewer" aria-label="Expanded No Input Maze screenshot">
