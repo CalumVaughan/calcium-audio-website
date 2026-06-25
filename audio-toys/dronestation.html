@@ -59,25 +59,63 @@
             <h2 id="dronestation-screenshots">Screenshots</h2>
             <div class="project-media-grid" aria-label="DroneStation screenshots">
                 <figure>
-                    <a class="project-media-link" href="img/dronestation-01.png" target="_blank" rel="noopener" aria-label="Open DroneStation screenshot 1 full size">
+                    <button class="project-media-link" type="button" data-full="img/dronestation-01.png" aria-label="Open DroneStation screenshot 1 full size">
                         <img src="img/dronestation-01.png" width="3024" height="1898" alt="DroneStation generative visual field with layered trails and glowing particles.">
                         <span>View large</span>
-                    </a>
+                    </button>
                 </figure>
                 <figure>
-                    <a class="project-media-link" href="img/dronestation-02.png" target="_blank" rel="noopener" aria-label="Open DroneStation screenshot 2 full size">
+                    <button class="project-media-link" type="button" data-full="img/dronestation-02.png" aria-label="Open DroneStation screenshot 2 full size">
                         <img src="img/dronestation-02.png" width="3024" height="1730" alt="DroneStation interface showing dense blue and violet reactive geometry.">
                         <span>View large</span>
-                    </a>
+                    </button>
                 </figure>
                 <figure>
-                    <a class="project-media-link" href="img/dronestation-03.png" target="_blank" rel="noopener" aria-label="Open DroneStation screenshot 3 full size">
+                    <button class="project-media-link" type="button" data-full="img/dronestation-03.png" aria-label="Open DroneStation screenshot 3 full size">
                         <img src="img/dronestation-03.png" width="3024" height="1898" alt="DroneStation generative visual state with abstract particles and echo trails.">
                         <span>View large</span>
-                    </a>
+                    </button>
                 </figure>
             </div>
         </section>
+
+        <dialog class="image-viewer" aria-label="Expanded DroneStation screenshot">
+            <button class="image-viewer-close" type="button">Close</button>
+            <img src="" alt="">
+        </dialog>
     </main>
+    <script>
+        const imageViewer = document.querySelector(".image-viewer");
+        const imageViewerImage = imageViewer.querySelector("img");
+        const imageViewerClose = imageViewer.querySelector(".image-viewer-close");
+
+        document.querySelectorAll(".project-media-link").forEach((button) => {
+            button.addEventListener("click", () => {
+                const thumbnail = button.querySelector("img");
+                imageViewerImage.src = button.dataset.full;
+                imageViewerImage.alt = thumbnail.alt;
+                imageViewer.showModal();
+            });
+        });
+
+        const closeImageViewer = () => {
+            imageViewerImage.removeAttribute("src");
+            imageViewerImage.alt = "";
+            imageViewer.close();
+        };
+
+        imageViewerClose.addEventListener("click", closeImageViewer);
+
+        imageViewer.addEventListener("click", (event) => {
+            if (event.target === imageViewer) {
+                closeImageViewer();
+            }
+        });
+
+        imageViewer.addEventListener("close", () => {
+            imageViewerImage.removeAttribute("src");
+            imageViewerImage.alt = "";
+        });
+    </script>
 </body>
 </html>
