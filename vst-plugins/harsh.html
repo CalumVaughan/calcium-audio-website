@@ -54,6 +54,68 @@
                 </ul>
             </aside>
         </section>
+
+        <section class="project-media-section" aria-labelledby="harsh-screenshots">
+            <h2 id="harsh-screenshots">Screenshots</h2>
+            <div class="project-media-grid" aria-label="HARSH screenshots">
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/harsh-01.png" aria-label="Open HARSH screenshot 1 full size">
+                        <img src="img/harsh-01.png" width="3024" height="1898" alt="HARSH plugin interface open inside Ableton Live with faders, controls, and red noise artwork.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/harsh-02.png" aria-label="Open HARSH screenshot 2 full size">
+                        <img src="img/harsh-02.png" width="3024" height="1898" alt="HARSH RNBO patch showing genexpr parameters and code boxes for the noise engine.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/harsh-03.png" aria-label="Open HARSH screenshot 3 full size">
+                        <img src="img/harsh-03.png" width="3024" height="1898" alt="HARSH plugin interface in Ableton Live with faders and rotary distortion controls visible.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+            </div>
+        </section>
+
+        <dialog class="image-viewer" aria-label="Expanded HARSH screenshot">
+            <button class="image-viewer-close" type="button">Close</button>
+            <img src="" alt="">
+        </dialog>
     </main>
+    <script>
+        const imageViewer = document.querySelector(".image-viewer");
+        const imageViewerImage = imageViewer.querySelector("img");
+        const imageViewerClose = imageViewer.querySelector(".image-viewer-close");
+
+        document.querySelectorAll(".project-media-link").forEach((button) => {
+            button.addEventListener("click", () => {
+                const thumbnail = button.querySelector("img");
+                imageViewerImage.src = button.dataset.full;
+                imageViewerImage.alt = thumbnail.alt;
+                imageViewer.showModal();
+            });
+        });
+
+        const closeImageViewer = () => {
+            imageViewerImage.removeAttribute("src");
+            imageViewerImage.alt = "";
+            imageViewer.close();
+        };
+
+        imageViewerClose.addEventListener("click", closeImageViewer);
+
+        imageViewer.addEventListener("click", (event) => {
+            if (event.target === imageViewer) {
+                closeImageViewer();
+            }
+        });
+
+        imageViewer.addEventListener("close", () => {
+            imageViewerImage.removeAttribute("src");
+            imageViewerImage.alt = "";
+        });
+    </script>
 </body>
 </html>
