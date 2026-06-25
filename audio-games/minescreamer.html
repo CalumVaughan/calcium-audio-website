@@ -22,47 +22,17 @@
 
     <main class="project-page has-site-header">
         <a class="back-link" href="index.html">Back to Audio Games</a>
-        <header class="project-hero">
-            <p class="eyebrow">Audio Games</p>
-            <h1>Minescreamer</h1>
-            <p>An audio-first reimagining of Minesweeper where generative patterns replace visual clue numbers.</p>
-            <div class="project-actions">
-                <a class="home-action" href="../plugins/minescreamer/index.html">Play Minescreamer</a>
-            </div>
-        </header>
+        <section class="project-pane-hero" aria-label="Minescreamer overview">
+            <header class="project-pane-copy">
+                <p class="eyebrow">Audio Games</p>
+                <h1>Minescreamer</h1>
+                <p>An audio-first reimagining of Minesweeper where generative patterns replace visual clue numbers.</p>
+                <div class="project-actions">
+                    <a class="home-action" href="../plugins/minescreamer/index.html">Play Minescreamer</a>
+                </div>
+            </header>
 
-        <section class="project-body" aria-label="Minescreamer description">
-            <article class="project-copy">
-                <h2>Description</h2>
-                <p>Minescreamer is an audio-first reimagining of the classic puzzle game Minesweeper. Instead of relying on visual clue numbers, players identify bomb locations by listening to generative audio patterns.</p>
-                <p>As one of my first RNBO-to-JavaScript web experiments, the audio architecture was intentionally built as a direct procedural system. Eight distinct generative clue signals were designed in GenExpr within RNBO, each corresponding to the number of adjacent bombs on a revealed tile.</p>
-                <p>A tile with one adjacent bomb emits a single soft pulse; a tile surrounded by all eight possible bombs unleashes an aggressive, noisy eight-pulse burst. This transforms traditional Minesweeper deduction into a process of active listening and pattern recognition.</p>
-                <p>The game includes Easy, Medium, and Hard difficulty modes, with higher difficulties requiring more advanced deduction strategies such as subset logic and overlapping constraint analysis.</p>
-                <p>Minescreamer was also my first project to implement online persistence, featuring a global high-score board and a Wall of Shame for detonations, powered by Supabase.</p>
-            </article>
-            <aside class="project-stack" aria-label="Project stack">
-                <h2>Stack</h2>
-                <ul class="stack-list">
-                    <li>Max/MSP</li>
-                    <li>RNBO</li>
-                    <li>Gen~</li>
-                    <li>p5.js</li>
-                    <li>JavaScript</li>
-                    <li>Supabase</li>
-                </ul>
-            </aside>
-        </section>
-
-        <section class="project-video-section" aria-labelledby="minescreamer-video">
-            <h2 id="minescreamer-video">Video</h2>
-            <div class="video-embed">
-                <iframe src="https://www.youtube.com/embed/J-9eUYH9dRU" title="Minescreamer video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </div>
-        </section>
-
-        <section class="project-media-section" aria-labelledby="minescreamer-screenshots">
-            <h2 id="minescreamer-screenshots">Screenshots</h2>
-            <div class="project-media-grid" aria-label="Minescreamer screenshots">
+            <div class="project-pane-window" aria-label="Minescreamer screenshots">
                 <figure>
                     <button class="project-media-link" type="button" data-full="img/minescreamer-01.png" aria-label="Open Minescreamer screenshot 1 full size">
                         <img src="img/minescreamer-01.png" width="2994" height="1862" alt="Minescreamer board showing flagged tiles, the listening state, and audio clue controls.">
@@ -82,6 +52,36 @@
                     </button>
                 </figure>
             </div>
+        </section>
+
+        <section class="project-detail-with-video" aria-label="Minescreamer description">
+            <article class="project-copy project-detail-copy">
+                <h2>Description</h2>
+                <p>Minescreamer is an audio-first reimagining of the classic puzzle game Minesweeper. Instead of relying on visual clue numbers, players identify bomb locations by listening to generative audio patterns.</p>
+                <p>As one of my first RNBO-to-JavaScript web experiments, the audio architecture was intentionally built as a direct procedural system. Eight distinct generative clue signals were designed in GenExpr within RNBO, each corresponding to the number of adjacent bombs on a revealed tile.</p>
+                <p>A tile with one adjacent bomb emits a single soft pulse; a tile surrounded by all eight possible bombs unleashes an aggressive, noisy eight-pulse burst. This transforms traditional Minesweeper deduction into a process of active listening and pattern recognition.</p>
+                <p>The game includes Easy, Medium, and Hard difficulty modes, with higher difficulties requiring more advanced deduction strategies such as subset logic and overlapping constraint analysis.</p>
+                <p>Minescreamer was also my first project to implement online persistence, featuring a global high-score board and a Wall of Shame for detonations, powered by Supabase.</p>
+            </article>
+
+            <aside class="project-detail-video" aria-labelledby="minescreamer-video">
+                <h2 id="minescreamer-video">Video</h2>
+                <div class="project-detail-video-frame video-embed">
+                    <iframe src="https://www.youtube.com/embed/J-9eUYH9dRU" title="Minescreamer video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </aside>
+        </section>
+
+        <section class="project-stack-bar" aria-label="Project stack">
+            <h2>Stack</h2>
+            <ul class="stack-list">
+                <li>Max/MSP</li>
+                <li>RNBO</li>
+                <li>Gen~</li>
+                <li>p5.js</li>
+                <li>JavaScript</li>
+                <li>Supabase</li>
+            </ul>
         </section>
 
         <dialog class="image-viewer" aria-label="Expanded Minescreamer screenshot">
