@@ -50,6 +50,68 @@
                 </ul>
             </aside>
         </section>
+
+        <section class="project-media-section" aria-labelledby="no-input-maze-screenshots">
+            <h2 id="no-input-maze-screenshots">Screenshots</h2>
+            <div class="project-media-grid" aria-label="No Input Maze screenshots">
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/no-input-maze-01.png" aria-label="Open No Input Maze screenshot 1 full size">
+                        <img src="img/no-input-maze-01.png" width="3024" height="1898" alt="No Input Maze wireframe corridor with signal counter and life meter visible.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/no-input-maze-02.png" aria-label="Open No Input Maze screenshot 2 full size">
+                        <img src="img/no-input-maze-02.png" width="3024" height="1898" alt="No Input Maze corridor view showing an audio signal target in the distance.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/no-input-maze-03.png" aria-label="Open No Input Maze screenshot 3 full size">
+                        <img src="img/no-input-maze-03.png" width="3024" height="1898" alt="No Input Maze red danger state with completed signal counter and minimap.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+            </div>
+        </section>
+
+        <dialog class="image-viewer" aria-label="Expanded No Input Maze screenshot">
+            <button class="image-viewer-close" type="button">Close</button>
+            <img src="" alt="">
+        </dialog>
     </main>
+    <script>
+        const imageViewer = document.querySelector(".image-viewer");
+        const imageViewerImage = imageViewer.querySelector("img");
+        const imageViewerClose = imageViewer.querySelector(".image-viewer-close");
+
+        document.querySelectorAll(".project-media-link").forEach((button) => {
+            button.addEventListener("click", () => {
+                const thumbnail = button.querySelector("img");
+                imageViewerImage.src = button.dataset.full;
+                imageViewerImage.alt = thumbnail.alt;
+                imageViewer.showModal();
+            });
+        });
+
+        const closeImageViewer = () => {
+            imageViewerImage.removeAttribute("src");
+            imageViewerImage.alt = "";
+            imageViewer.close();
+        };
+
+        imageViewerClose.addEventListener("click", closeImageViewer);
+
+        imageViewer.addEventListener("click", (event) => {
+            if (event.target === imageViewer) {
+                closeImageViewer();
+            }
+        });
+
+        imageViewer.addEventListener("close", () => {
+            imageViewerImage.removeAttribute("src");
+            imageViewerImage.alt = "";
+        });
+    </script>
 </body>
 </html>
