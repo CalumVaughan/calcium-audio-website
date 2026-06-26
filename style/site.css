@@ -662,6 +662,10 @@ h2 {
     min-height: 260px;
 }
 
+.project-pane-window.is-four-up {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 @media (max-width: 760px) {
     .site-header {
         display: block;
