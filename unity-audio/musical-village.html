@@ -28,8 +28,8 @@
             <p>RNBO, ChucK, and sonic overstimulation inside a small Unity world built around combat, live coding, and audio-reactive play.</p>
         </header>
 
-        <section class="project-body" aria-label="Musical Village description">
-            <article class="project-copy">
+        <section class="project-detail-with-video" aria-label="Musical Village description">
+            <article class="project-copy project-detail-copy">
                 <h2>Description</h2>
                 <p>Musical Village was one of my first serious experiments in bringing RNBO audio packages into Unity in a way that felt like an actual game rather than a technical demo. The project combined three core systems: a 2D bullet-hell boss battle, an in-game live-coding environment for ChucK, and an audio-reactive disco where players could hear and visualize their own code in real time.</p>
                 <p>The project began as an attempt to push my earlier RNBO-to-Unity experiments beyond sparse prototypes. I built a bullet-hell encounter in which the player, an adventurous cat, fights a giant geometric flying boss. Almost every combat interaction had its own procedural sound layer: the player&apos;s shots, successful hits, the boss&apos;s three bullet types, and player damage all triggered separate algorithmic sound effects built in genexpr~ and exported via RNBO. The aim was to make sound feel structural rather than decorative, with the audio density matching the intensity of the gameplay.</p>
@@ -38,19 +38,27 @@
                 <p>I later extended this idea with an audio-reactive disco. In this space, players could load one of their saved ChucK patches and watch the environment generate visuals in response to the musical behavior of the code. Rather than a fixed visualizer, it acted more like a playable stage for live-coded composition.</p>
                 <p>I&apos;ve since left the project behind, but it served its purpose: it proved out a workflow for combining RNBO packages, procedural game audio, and live coding inside Unity. If I return to it, I&apos;d want to push the bullet-hell side much further. Vampire Survivors was a clear influence, but the longer-term goal is slightly different: a game that overwhelms the player sonically as much as visually.</p>
             </article>
-            <aside class="project-stack" aria-label="Project stack">
-                <h2>Stack</h2>
-                <ul class="stack-list">
-                    <li>Unity 6</li>
-                    <li>C#</li>
-                    <li>ChucK via Chunity</li>
-                    <li>RNBO</li>
-                    <li>Max/MSP</li>
-                    <li>gen~ / genexpr~</li>
-                    <li>Unity URP 2D</li>
-                    <li>Unity Input System</li>
-                </ul>
+
+            <aside class="project-detail-video" aria-labelledby="musical-village-video">
+                <h2 id="musical-village-video">Video</h2>
+                <div class="project-detail-video-frame video-embed">
+                    <iframe src="https://player.vimeo.com/video/1204809612" title="Musical Village video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
             </aside>
+        </section>
+
+        <section class="project-stack-bar" aria-label="Project stack">
+            <h2>Stack</h2>
+            <ul class="stack-list">
+                <li>Unity 6</li>
+                <li>C#</li>
+                <li>ChucK via Chunity</li>
+                <li>RNBO</li>
+                <li>Max/MSP</li>
+                <li>gen~ / genexpr~</li>
+                <li>Unity URP 2D</li>
+                <li>Unity Input System</li>
+            </ul>
         </section>
     </main>
 </body>
