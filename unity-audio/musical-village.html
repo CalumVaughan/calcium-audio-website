@@ -22,11 +22,40 @@
 
     <main class="project-page has-site-header">
         <a class="back-link" href="index.html">Back to Unity Audio</a>
-        <header class="project-hero">
-            <p class="eyebrow">Unity Audio</p>
-            <h1>Musical Village</h1>
-            <p>RNBO, ChucK, and sonic overstimulation inside a small Unity world built around combat, live coding, and audio-reactive play.</p>
-        </header>
+        <section class="project-pane-hero" aria-label="Musical Village overview">
+            <header class="project-pane-copy">
+                <p class="eyebrow">Unity Audio</p>
+                <h1>Musical Village</h1>
+                <p>RNBO, ChucK, and sonic overstimulation inside a small Unity world built around combat, live coding, and audio-reactive play.</p>
+            </header>
+
+            <div class="project-pane-window is-four-up" aria-label="Musical Village screenshots">
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/musical-village-01.png" aria-label="Open Musical Village screenshot 1 full size">
+                        <img src="img/musical-village-01.png" width="3024" height="1660" alt="Musical Village bullet-hell boss fight with player health, boss phase meter, and dense projectile patterns.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/musical-village-02.png" aria-label="Open Musical Village screenshot 2 full size">
+                        <img src="img/musical-village-02.png" width="3024" height="1660" alt="Musical Village audio-reactive disco scene with colorful procedural visuals and stage lighting.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/musical-village-03.png" aria-label="Open Musical Village screenshot 3 full size">
+                        <img src="img/musical-village-03.png" width="3024" height="1660" alt="Musical Village in-game ChucK live-coding computer with patch text and executable code controls.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/musical-village-04.png" aria-label="Open Musical Village screenshot 4 full size">
+                        <img src="img/musical-village-04.png" width="3024" height="1660" alt="Musical Village combat scene with the cat player, enemies, projectiles, and procedural audio interface elements.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+            </div>
+        </section>
 
         <section class="project-detail-with-video" aria-label="Musical Village description">
             <article class="project-copy project-detail-copy">
@@ -60,6 +89,44 @@
                 <li>Unity Input System</li>
             </ul>
         </section>
+
+        <dialog class="image-viewer" aria-label="Expanded Musical Village screenshot">
+            <button class="image-viewer-close" type="button">Close</button>
+            <img src="" alt="">
+        </dialog>
     </main>
+    <script>
+        const imageViewer = document.querySelector(".image-viewer");
+        const imageViewerImage = imageViewer.querySelector("img");
+        const imageViewerClose = imageViewer.querySelector(".image-viewer-close");
+
+        document.querySelectorAll(".project-media-link").forEach((button) => {
+            button.addEventListener("click", () => {
+                const thumbnail = button.querySelector("img");
+                imageViewerImage.src = button.dataset.full;
+                imageViewerImage.alt = thumbnail.alt;
+                imageViewer.showModal();
+            });
+        });
+
+        const closeImageViewer = () => {
+            imageViewerImage.removeAttribute("src");
+            imageViewerImage.alt = "";
+            imageViewer.close();
+        };
+
+        imageViewerClose.addEventListener("click", closeImageViewer);
+
+        imageViewer.addEventListener("click", (event) => {
+            if (event.target === imageViewer) {
+                closeImageViewer();
+            }
+        });
+
+        imageViewer.addEventListener("close", () => {
+            imageViewerImage.removeAttribute("src");
+            imageViewerImage.alt = "";
+        });
+    </script>
 </body>
 </html>
