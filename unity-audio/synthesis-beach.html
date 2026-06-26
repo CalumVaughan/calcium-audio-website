@@ -22,11 +22,34 @@
 
     <main class="project-page has-site-header">
         <a class="back-link" href="index.html">Back to Unity Audio</a>
-        <header class="project-hero">
-            <p class="eyebrow">Unity Audio</p>
-            <h1>Synthesis Beach</h1>
-            <p>A collaborative RNBO-to-Unity plugin test disguised as a first-person beach synth toy.</p>
-        </header>
+        <section class="project-pane-hero" aria-label="Synthesis Beach overview">
+            <header class="project-pane-copy">
+                <p class="eyebrow">Unity Audio</p>
+                <h1>Synthesis Beach</h1>
+                <p>A collaborative RNBO-to-Unity plugin test disguised as a first-person beach synth toy.</p>
+            </header>
+
+            <div class="project-pane-window" aria-label="Synthesis Beach screenshots">
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/synthesis-beach-01.png" aria-label="Open Synthesis Beach screenshot 1 full size">
+                        <img src="img/synthesis-beach-01.png" width="3024" height="1540" alt="Synthesis Beach first-person synth environment with waveform, pitch, level, cutoff, resonance, and echo controls arranged across a stylized beach.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/synthesis-beach-02.png" aria-label="Open Synthesis Beach screenshot 2 full size">
+                        <img src="img/synthesis-beach-02.png" width="2880" height="1710" alt="RNBO patch for Synthesis Beach showing oscillator selection, filter parameters, delay controls, gen~ processing, and stereo output.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+                <figure>
+                    <button class="project-media-link" type="button" data-full="img/synthesis-beach-03.png" aria-label="Open Synthesis Beach screenshot 3 full size">
+                        <img src="img/synthesis-beach-03.png" width="3024" height="1540" alt="Synthesis Beach close view of cutoff, feedback, resonance, and echo control objects in the Unity scene.">
+                        <span class="maximize-icon" aria-hidden="true"></span>
+                    </button>
+                </figure>
+            </div>
+        </section>
 
         <section class="project-detail-with-video" aria-label="Project details">
             <article class="project-copy project-detail-copy">
@@ -56,6 +79,44 @@
                 <li>Codex</li>
             </ul>
         </section>
+
+        <dialog class="image-viewer" aria-label="Expanded Synthesis Beach screenshot">
+            <button class="image-viewer-close" type="button">Close</button>
+            <img src="" alt="">
+        </dialog>
     </main>
+    <script>
+        const imageViewer = document.querySelector(".image-viewer");
+        const imageViewerImage = imageViewer.querySelector("img");
+        const imageViewerClose = imageViewer.querySelector(".image-viewer-close");
+
+        document.querySelectorAll(".project-media-link").forEach((button) => {
+            button.addEventListener("click", () => {
+                const thumbnail = button.querySelector("img");
+                imageViewerImage.src = button.dataset.full;
+                imageViewerImage.alt = thumbnail.alt;
+                imageViewer.showModal();
+            });
+        });
+
+        const closeImageViewer = () => {
+            imageViewerImage.removeAttribute("src");
+            imageViewerImage.alt = "";
+            imageViewer.close();
+        };
+
+        imageViewerClose.addEventListener("click", closeImageViewer);
+
+        imageViewer.addEventListener("click", (event) => {
+            if (event.target === imageViewer) {
+                closeImageViewer();
+            }
+        });
+
+        imageViewer.addEventListener("close", () => {
+            imageViewerImage.removeAttribute("src");
+            imageViewerImage.alt = "";
+        });
+    </script>
 </body>
 </html>
