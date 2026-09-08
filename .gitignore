@@ -10,3 +10,8 @@ dist/
 .dev.vars*
 !.dev.vars.example
 !.env.example
+
+# Calcium Studio build cache and local dependencies
+studio-source/node_modules
+studio-source/.vite/
+studio-source/*.tsbuildinfo
