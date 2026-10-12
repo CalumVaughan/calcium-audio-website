@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="Help for PluginShootout Audio V1: download the PDF guide, understand the controls and compare effects, complete chains and nested racks in Ableton Live.">
+    <link rel="canonical" href="https://calciumaudio.com/pluginshootout/help/">
+    <title>PluginShootout Audio — Help | Calcium Audio</title>
+    <link rel="stylesheet" href="/style/site.css">
+    <link rel="stylesheet" href="/pluginshootout/help/help.css">
+</head>
+<body>
+    <a class="skip-link" href="#help">Skip to help</a>
+    <header class="site-header">
+        <a class="site-mark" href="/">Calcium Audio</a>
+        <nav class="category-nav" aria-label="Project categories">
+            <a href="/unity-audio/">Unity Audio</a>
+            <a href="/audio-games/">Audio Games</a>
+            <a href="/audio-toys/">Audio Toys</a>
+            <a href="/plugin-shootout/" aria-current="location">Plugin Shootout</a>
+            <a href="/vst-plugins/">VST Plugins</a>
+            <a href="/contact/">Contact</a>
+        </nav>
+    </header>
+    <main id="help" class="project-page has-site-header help-page">
+        <header class="help-hero">
+            <p class="eyebrow">PluginShootout <span class="audio-tag">Audio V1</span></p>
+            <h1>Help &amp; support.</h1>
+            <p class="help-lead">More listening. Less switching plugins on and off.</p>
+            <p class="help-intro">PluginShootout lets you audition a pool of audio effects one at a time, move your favourites to the front and delete the rest. Survival of the fittest for your effects chain.</p>
+            <p class="help-intro">Originally built for comparing amp simulations, it works with any audio effects—from finding a sound you weren’t looking for to listening closely to the differences between two compressors.</p>
+        </header>
+
+        <section class="guide" aria-labelledby="guide-title">
+            <div>
+                <p class="eyebrow">The manual / 4 pages</p>
+                <h2 id="guide-title">Keep the guide to hand.</h2>
+                <p>Controls, mapping, complete chains and nested comparisons, with examples from Live.</p>
+            </div>
+            <div class="guide-actions">
+                <a class="help-button" href="/pluginshootout/downloads/PluginShootout_Audio_V1_Readme.pdf" download>Download PDF <span aria-hidden="true">↓</span></a>
+                <a class="text-link" href="/pluginshootout/downloads/PluginShootout_Audio_V1_Readme.pdf">Read in your browser <span aria-hidden="true">↗</span></a>
+            </div>
+        </section>
+
+        <section class="help-section" aria-labelledby="start-title">
+            <div class="section-heading"><span class="section-number" aria-hidden="true">01</span><h2 id="start-title">Start with a pool.</h2></div>
+            <div class="section-content">
+                <p>Place PluginShootout before your comparison effects in the same Audio Effect Rack chain. Play your source audio, then use Previous and Next to listen through the candidates.</p>
+                <div class="chain" aria-label="Signal order: PluginShootout, followed by effect one, effect two and effect three.">
+                    <span class="chain-ps">PS</span><span aria-hidden="true">→</span><span>FX 1</span><span>FX 2</span><span>FX 3</span>
+                </div>
+                <p class="note">Each instance controls the devices to its right, up to the next PluginShootout or the end of that track or rack chain.</p>
+            </div>
+        </section>
+
+        <section class="help-section" aria-labelledby="controls-title">
+            <div class="section-heading"><span class="section-number" aria-hidden="true">02</span><h2 id="controls-title">The controls.</h2></div>
+            <div class="section-content">
+                <dl class="control-list">
+                    <div><dt>Previous / Next</dt><dd>Switch between candidates. The selected effect is enabled; the other comparison effects are disabled.</dd></div>
+                    <div><dt class="keep-colour">Move to Front</dt><dd>Move a favourite to the front of the comparison order, then carry on auditioning.</dd></div>
+                    <div><dt class="delete-colour">Delete</dt><dd>Remove the selected candidate. At a parent level, a rack counts as one candidate, so deleting it removes the whole rack.</dd></div>
+                    <div><dt>Popup</dt><dd>Keep the comparison controls in a floating window. Drag the hand to move it; click X to close. Its instance number matches the rack device.</dd></div>
+                    <div><dt>Options</dt><dd>Manage plugin windows, enable Auto-Reveal GUIs, change colours and popup size, collapse devices, or open controller mapping.</dd></div>
+                    <div><dt>MIDI / Key Mapping</dt><dd>Open Options → Mapping, then use Live’s MIDI or Key Map to assign Previous, Next, Move to Front and Delete.</dd></div>
+                </dl>
+                <p class="mapping-note">Mapped actions do not support Undo/Redo. Use the ordinary mouse buttons when you need normal Undo/Redo.</p>
+            </div>
+        </section>
+
+        <section class="help-section" aria-labelledby="scope-title">
+            <div class="section-heading"><span class="section-number" aria-hidden="true">03</span><h2 id="scope-title">From effects to whole chains.</h2></div>
+            <div class="section-content scope-copy">
+                <h3>One pool</h3><p>Compare individual effects or different presets of the same effect. The workflow applies to any audio effect, not just amp simulations.</p>
+                <h3>Several pools</h3><p>Use multiple instances on one track, each with its own candidates. Make an independent choice in each pool to build a combined sound. To compare several effects together as one candidate, put them inside a rack.</p>
+                <h3>Nests inside nests</h3><p>A parent instance can choose between ordinary devices and racks containing their own PluginShootout. Each child handles the candidates inside its own chain. Repeat this inside deeper racks to compare whole approaches, then refine the choices within them without rebuilding your setup.</p>
+                <a class="text-link" href="/pluginshootout/downloads/PluginShootout_Audio_V1_Readme.pdf#page=3">See the setups in the PDF <span aria-hidden="true">↗</span></a>
+            </div>
+        </section>
+
+        <section class="support" aria-labelledby="support-title">
+            <div><p class="eyebrow">Calcium Audio / Calum Vaughan</p><h2 id="support-title">Need a hand?</h2><p>For questions or a problem with the device, email me. Include your Live and Max versions, what you were doing and a screenshot if it helps.</p></div>
+            <a class="text-link" href="mailto:calciumsolutions@gmail.com">calciumsolutions@gmail.com <span aria-hidden="true">↗</span></a>
+        </section>
+        <footer class="help-footer"><a href="/plugin-shootout/">← Back to Plugin Shootout</a><span>PluginShootout Audio V1</span></footer>
+    </main>
+</body>
+</html>
