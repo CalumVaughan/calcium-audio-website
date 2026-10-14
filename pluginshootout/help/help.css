@@ -80,3 +80,5 @@
 .help-hero>.eyebrow{margin-bottom:26px}
 .help-jumps{margin-top:26px}
 @media(max-width:850px){.product-intro{gap:24px}.purchase-panel{max-width:none}}
+
+.buy-button{text-decoration:none;cursor:pointer}
