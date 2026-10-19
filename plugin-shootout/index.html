@@ -4,72 +4,123 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#000000">
+    <meta name="description" content="Compare audio effects, presets and complete chains in Ableton Live with Plugin Shootout. Get the device, read the guide and explore controls, mapping and nested racks.">
+    <link rel="canonical" href="https://calciumaudio.com/plugin-shootout/">
     <title>Plugin Shootout | Calcium Audio</title>
-    <link rel="stylesheet" href="../style/site.css">
+    <link rel="stylesheet" href="/style/site.css">
+    <link rel="stylesheet" href="/pluginshootout/help/help.css?v=20261014-release">
 </head>
-<body>
+<body class="plugin-help">
+    <a class="skip-link" href="#help">Skip to content</a>
     <header class="site-header">
-        <a class="site-mark" href="../index.html">Calcium Audio</a>
+        <a class="site-mark" href="/">Calcium Audio</a>
         <nav class="category-nav" aria-label="Project categories">
-            <a href="../unity-audio/index.html">Unity Audio</a>
-            <a href="../audio-games/index.html">Audio Games</a>
-            <a href="../audio-toys/index.html">Audio Toys</a>
-            <a href="../plugin-shootout/index.html" aria-current="page">Plugin Shootout</a>
-            <a href="../vst-plugins/index.html">VST Plugins</a>
-            <a href="../contact/index.html">Contact</a>
+            <a href="/unity-audio/">Unity Audio</a>
+            <a href="/audio-games/">Audio Games</a>
+            <a href="/audio-toys/">Audio Toys</a>
+            <a href="/plugin-shootout/" aria-current="page">Plugin Shootout</a>
+            <a href="/vst-plugins/">VST Plugins</a>
+            <a href="/contact/">Contact</a>
         </nav>
     </header>
-
-    <main class="project-page has-site-header">
-        <header class="project-hero">
-            <p class="eyebrow">Plugin Shootout</p>
-            <h1>Plugin Shootout</h1>
-            <p>A Max for Live workflow tool for survival-of-the-fittest plugin, preset, MIDI effect, and instrument comparison inside Ableton Live.</p>
-            <div class="project-actions">
-                <a class="back-link" href="/pluginshootout/help/">Help &amp; PDF guide</a>
+    <main id="help" class="project-page has-site-header help-page">
+        <header class="help-hero">
+            <p class="eyebrow">Plugin Shootout <span class="audio-tag">Audio</span><span class="version-soon">MIDI — Coming soon</span><span class="version-soon">Instrument — Coming soon</span></p>
+            <div class="product-intro">
+                <div class="product-copy">
+                    <h1>Plugin Shootout</h1>
+                    <p class="title-sub">Compare audio effects in Ableton Live.</p>
+                    <p class="help-intro">Plugin Shootout is a Max for Live workflow tool that helps you find the right plugin or preset for your session. Originally developed in collaboration with Jason Zdora to make A/B testing guitar amp simulations easier, it now works with any audio effect in Ableton Live.</p>
+                    <p class="help-intro">Think of it as “survival of the fittest” for your effects chain. Plugin Shootout activates your selection and deactivates the rest, saving you hundreds of clicks. Move your favourites to the front, delete the ones that don’t fit, and repeat until you have a shortlist—or a winner.</p>
+                    <p class="help-intro">Plugin Shootout also lets you compare effects processing the output of MIDI instruments and samplers. Use it to build creative modulation chains, make precise guitar tweaks, or explore different sounds.</p>
+                    <ul class="product-features">
+                        <li>Compare individual effects or complete chains.</li>
+                        <li>Use nested racks to audition choices within a chain.</li>
+                        <li>Control the comparison from a popup, MIDI controller or keyboard.</li>
+                    </ul>
+                </div>
+                <aside class="purchase-panel" aria-labelledby="purchase-title">
+                    <p class="eyebrow">Audio effects</p>
+                    <h2 id="purchase-title">Get Plugin Shootout</h2>
+                    <p>A Max for Live audio device for Ableton Live.</p>
+                    <p class="purchase-contents">Device + four-page PDF guide</p>
+                    <a class="buy-button" href="https://calumvaughan.gumroad.com/l/pluginshootout">Buy now <span aria-hidden="true">↗</span></a>
+                    <p class="purchase-status">On Gumroad · Device + PDF guide</p>
+                    <a class="text-link" href="#guide-title">Read the manual first ↓</a>
+                    <p class="purchase-contents">Requires Ableton Live with Max for Live. Use it with your own audio effects; third-party plugins are not included.</p>
+                </aside>
             </div>
+            <nav class="help-jumps" aria-label="On this page">
+                <span>Explore the device</span>
+                <a href="#start-title">Setup</a>
+                <a href="#controls-title">Controls</a>
+                <a href="#scope-title">Racks &amp; nesting</a>
+                <a href="#requirements-title">Requirements</a>
+                <a href="#support-title">Support</a>
+            </nav>
         </header>
 
-        <section class="project-body" aria-label="Plugin Shootout description">
-            <article class="project-copy">
-                <h2>Description</h2>
-                <p>Plugin Shootout is a Max for Live workflow tool, developed in collaboration with Jason Zdora, designed to dramatically speed up plugin, preset, MIDI effect, and instrument comparison inside Ableton Live.</p>
-                <p>Originally conceived as a way for guitarists to rapidly audition large collections of amp simulations and presets, the device evolved into a broader survival-of-the-fittest workflow system for creative decision-making.</p>
-                <p>The concept is simple: place Plugin Shootout before a rack containing multiple devices or presets, whether that&apos;s 100 Neural Amp Modeler profiles, 50 reverb chains, a bank of MIDI generators, or a collection of synth presets, and instantly cycle through them using left/right controls. Only the currently selected chain remains active, while all others are automatically disabled.</p>
-                <p>This removes the friction of manually enabling, disabling, and navigating large racks, allowing users to focus entirely on comparison and selection.</p>
-                <p>The workflow is intentionally destructive and iterative: strong candidates can be moved forward in the rack hierarchy, while weaker options can be deleted entirely. Over time, large collections are reduced into smaller and stronger groups, making the process feel closer to competitive elimination than traditional preset browsing.</p>
-                <p>All major controls are MIDI mappable, making Plugin Shootout particularly effective for hands-free workflows, especially for guitarists using foot controllers, as well as producers working with hardware MIDI surfaces.</p>
-                <p>To support different workflows, the device includes Rack Mode, embedded directly inside Live&apos;s device chain, and Popup Mode, opening a floating plugin-style interface for focused browsing.</p>
-                <p>Both modes provide contextual rack information, including track, group, rack, chain, and selected device status, making complex sessions easier to navigate.</p>
-                <p>The current release is built for audio effects. Dedicated MIDI Effect and Instrument editions are planned, extending the same elimination workflow to arpeggiators, sequencers, scale devices, synthesizers, samplers and drum racks.</p>
-                <p>Plugin Shootout is built entirely in Max for Live and remains exclusive to Ableton Live.</p>
-            </article>
-            <aside class="project-stack" aria-label="Project details">
-                <h2>Features</h2>
-                <ul class="feature-list">
-                    <li>Rapid A/B testing for audio effects, MIDI effects, and instruments</li>
-                    <li>Optimized for large racks with dozens or hundreds of chains</li>
-                    <li>Automatic chain enabling/disabling for focused comparison</li>
-                    <li>Move and Delete functions for iterative elimination workflows</li>
-                    <li>Full MIDI mapping support for hands-free operation</li>
-                    <li>Rack Mode and Popup Mode interfaces</li>
-                    <li>Track, group, rack, chain, and device info display</li>
-                    <li>Multiple instance support per Live Set</li>
-                    <li>Colour customization and instance labelling</li>
-                    <li>Colourblind mode accessibility</li>
-                    <li>Collapse All Devices workflow utility</li>
-                    <li>Triple-click and MIDI-close popup behaviour</li>
-                </ul>
-                <h2>Stack</h2>
-                <ul class="stack-list">
-                    <li>Ableton Live</li>
-                    <li>Max for Live</li>
-                    <li>Max/MSP</li>
-                    <li>JavaScript</li>
-                    <li>Live API</li>
-                </ul>
-            </aside>
+        <section class="guide" aria-labelledby="guide-title">
+            <div>
+                <p class="eyebrow">PDF / 4 pages</p>
+                <h2 id="guide-title">The manual</h2>
+                <p>Controls, mapping, complete chains and nested comparisons, with examples from Live.</p>
+            </div>
+            <div class="guide-actions">
+                <a class="help-button" href="/pluginshootout/downloads/Plugin_Shootout_User_Guide.pdf" download>Download PDF <span aria-hidden="true">↓</span></a>
+                <a class="text-link" href="/pluginshootout/downloads/Plugin_Shootout_User_Guide.pdf">Read in your browser <span aria-hidden="true">↗</span></a>
+            </div>
         </section>
+
+        <section class="help-section" aria-labelledby="start-title">
+            <div class="section-heading"><span class="section-number" aria-hidden="true">01</span><h2 id="start-title">Setup</h2></div>
+            <div class="section-content">
+                <p>Place Plugin Shootout before the audio effects you want to compare. For simplicity, group the device and your comparison effects into the same chain of an Audio Effect Rack. Keep your source playing and use Previous and Next to compare the candidates.</p>
+                <div class="chain" aria-label="Signal order: Plugin Shootout, followed by effect one, effect two and effect three.">
+                    <span class="chain-ps">PS</span><span aria-hidden="true">→</span><span>FX 1</span><span>FX 2</span><span>FX 3</span>
+                </div>
+                <p class="note">Each instance controls the devices to its right, up to the next Plugin Shootout or the end of that track or rack chain.</p>
+            </div>
+        </section>
+
+        <section class="help-section" aria-labelledby="controls-title">
+            <div class="section-heading"><span class="section-number" aria-hidden="true">02</span><h2 id="controls-title">Controls</h2></div>
+            <div class="section-content">
+                <dl class="control-list">
+                    <div><dt>Previous / Next</dt><dd>Switch between candidates. The selected effect is enabled; the other comparison effects are disabled.</dd></div>
+                    <div><dt class="keep-colour">Move to Front</dt><dd>Move the selected candidate to the front of the comparison order. Selection stays at its original position so you can carry on through the remaining candidates.</dd></div>
+                    <div><dt class="delete-colour">Delete</dt><dd>Remove the selected candidate. At a parent level, a rack counts as one candidate, so deleting it removes the whole rack.</dd></div>
+                    <div><dt>Popup</dt><dd>Open a floating window with Previous, Next, Move to Front and Delete. The labels show the current track, group, chain and selected effect. Drag the hand to move the window. Click X to close it, or triple-click the drag handle.</dd></div>
+                    <div><dt>Options</dt><dd>Manage plugin windows, enable Auto-Reveal GUIs, change colours and popup size, collapse devices, or open controller mapping.</dd></div>
+                    <div><dt>MIDI / Key Mapping</dt><dd>Open Options → Mapping to reveal the four dedicated targets. Enter Live’s MIDI Map or Key Map mode, select a target, then press the MIDI control or key you want to assign. Exit mapping mode to use your assignments. Assignments stay active when the panel is hidden.</dd></div>
+                </dl>
+                <p class="mapping-note">Mapped actions do not support normal Undo/Redo, and some changes may still appear in Undo history. Use the ordinary mouse buttons when you need normal Undo/Redo.</p>
+            </div>
+        </section>
+
+        <section class="help-section" aria-labelledby="scope-title">
+            <div class="section-heading"><span class="section-number" aria-hidden="true">03</span><h2 id="scope-title">Racks &amp; nesting</h2></div>
+            <div class="section-content scope-copy">
+                <h3>One pool</h3><p>Compare individual effects or different presets of the same effect. The workflow applies to any audio effect, not just amp simulations.</p>
+                <h3>Several pools</h3><p>Use multiple instances on one track, each with its own candidates. Make an independent choice in each pool to build a combined sound. To compare several effects together as one candidate, put them inside a rack.</p>
+                <h3>Nests inside nests</h3><p>A parent Plugin Shootout can compare individual effects and racks that contain their own child instances. The parent selects the outer candidate, while each child controls the effects inside its own rack. Repeat this arrangement to compare complete chains, explore variations within them and refine individual effects without rebuilding your setup.</p>
+                <a class="text-link" href="/pluginshootout/downloads/Plugin_Shootout_User_Guide.pdf#page=3">See the setups in the PDF <span aria-hidden="true">↗</span></a>
+            </div>
+        </section>
+
+        <section class="help-section" aria-labelledby="requirements-title">
+            <div class="section-heading"><span class="section-number" aria-hidden="true">04</span><h2 id="requirements-title">Requirements &amp; download</h2></div>
+            <div class="section-content">
+                <p>Plugin Shootout requires Ableton Live with Max for Live. It is a Max for Live audio-effect device, rather than a standalone application or a VST/AU plugin.</p>
+                <p>The download includes <strong>Plugin Shootout.amxd</strong> and a four-page PDF guide covering the controls, mapping and rack setups. Use the device with your own audio effects; third-party plugins are not included.</p>
+            </div>
+        </section>
+
+        <section class="support" aria-labelledby="support-title">
+            <div><p class="eyebrow">Calcium Audio / Calum Vaughan</p><h2 id="support-title">Questions / bugs</h2><p>Email me if something’s unclear or behaving oddly. For bugs, your Live and Max versions, what happened and a screenshot are useful.</p></div>
+            <a class="text-link" href="mailto:calciumsolutions@gmail.com">calciumsolutions@gmail.com <span aria-hidden="true">↗</span></a>
+        </section>
+        <footer class="help-footer"><a href="#help">↑ Back to top</a><span>Plugin Shootout</span></footer>
     </main>
 </body>
 </html>
